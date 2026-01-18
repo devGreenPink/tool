@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Dev Tools v2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/5.1.0/diff.min.js"></script>
+    <style>
+        body { font-family: 'Kanit', sans-serif; background-color: #f8fafc; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        .tab-btn.active { border-bottom: 3px solid #6366f1; color: #6366f1; font-weight: 600; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .diff-added { background-color: #dcfce7; color: #166534; }
+        .diff-removed { background-color: #fee2e2; color: #991b1b; text-decoration: line-through; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <div class="max-w-6xl mx-auto p-4 md:p-10">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-indigo-700">Pro Dev Tools</h1>
+            <p class="text-slate-500 mt-2">เครื่องมือสุ่มข้อมูล, แปลง SQL และเปรียบเทียบข้อความ</p>
+        </header>
+
+        <div class="flex border-b border-gray-200 mb-6 overflow-x-auto bg-white rounded-t-xl px-2 sticky top-0 z-10 shadow-sm">
+            <button onclick="openTab(event, 'random-tab')" class="tab-btn active py-4 px-5 text-slate-600 hover:text-indigo-600 whitespace-nowrap">🎲 สุ่มข้อมูล</button>
+            <button onclick="openTab(event, 'sql-tab')" class="tab-btn py-4 px-5 text-slate-600 hover:text-indigo-600 whitespace-nowrap">📜 แปลง SQL</button>
+            <button onclick="openTab(event, 'compare-tab')" class="tab-btn py-4 px-5 text-slate-600 hover:text-indigo-600 whitespace-nowrap">🔍 เปรียบเทียบ (Diff)</button>
+            <button onclick="openTab(event, 'json-tab')" class="tab-btn py-4 px-5 text-slate-600 hover:text-indigo-600 whitespace-nowrap">📦 JSON Tool</button>
+            <button onclick="openTab(event, 'unix-tab')" class="tab-btn py-4 px-5 text-slate-600 hover:text-indigo-600 whitespace-nowrap">🕒 Unix Time</button>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-200">
+            
+            <div id="random-tab" class="tab-content active space-y-6">
+                <div class="grid md:grid-cols-2 gap-6 items-start">
+                    <div class="space-y-4">
+                        <h2 class="text-2xl font-bold text-slate-800">Mock Data Generator</h2>
+                        <p class="text-slate-500">สร้างข้อมูลจำลองสำหรับทดสอบระบบ (Thai Localization)</p>
+                        <button onclick="generateAll()" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg transition active:scale-95">สุ่มข้อมูลใหม่ ✨</button>
+                    </div>
+                    <div class="grid grid-cols-1 gap-2">
+                        <label class="text-xs font-bold text-slate-400 uppercase">Results</label>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 flex justify-between items-center">
+                            <span class="text-sm text-slate-500 italic">บัตรประชาชน: <b id="out-id" class="ml-2 font-mono text-slate-800">-</b></span>
+                            <button onclick="copyToClipboard('out-id')" class="text-indigo-500 text-sm font-medium">Copy</button>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 flex justify-between items-center">
+                            <span class="text-sm text-slate-500 italic">ชื่อ-นามสกุล: <b id="out-name" class="ml-2 text-slate-800">-</b></span>
+                            <button onclick="copyToClipboard('out-name')" class="text-indigo-500 text-sm font-medium">Copy</button>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 flex justify-between items-center">
+                            <span class="text-sm text-slate-500 italic">เบอร์โทรศัพท์: <b id="out-phone" class="ml-2 font-mono text-slate-800">-</b></span>
+                            <button onclick="copyToClipboard('out-phone')" class="text-indigo-500 text-sm font-medium">Copy</button>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 flex justify-between items-center">
+                            <span class="text-sm text-slate-500 italic">อีเมล: <b id="out-email" class="ml-2 font-mono text-slate-800">-</b></span>
+                            <button onclick="copyToClipboard('out-email')" class="text-indigo-500 text-sm font-medium">Copy</button>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 flex justify-between items-center">
+                            <span class="text-sm text-slate-500 italic">UUID v4: <b id="out-uuid" class="ml-2 font-mono text-xs text-slate-800">-</b></span>
+                            <button onclick="copyToClipboard('out-uuid')" class="text-indigo-500 text-sm font-medium">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sql-tab" class="tab-content space-y-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-slate-800">Java StringBuilder to Clean SQL</h2>
+                    <button onclick="copyArea('sql-output')" class="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-md text-sm font-bold hover:bg-indigo-200">Copy Result</button>
+                </div>
+                <textarea id="sql-input" rows="6" class="w-full p-3 border rounded-lg font-mono text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder='วางโค้ดที่นี่... เช่น sql.append("SELECT * FROM users ");'></textarea>
+                <button onclick="convertSQL()" class="w-full bg-emerald-600 text-white py-3 rounded-lg font-bold hover:bg-emerald-700 transition">Clean SQL</button>
+                <textarea id="sql-output" rows="10" readonly class="w-full p-3 bg-slate-900 text-emerald-400 rounded-lg font-mono text-sm"></textarea>
+            </div>
+
+            <div id="compare-tab" class="tab-content space-y-4">
+                <h2 class="text-xl font-bold text-slate-800">Compare Text / JSON</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <textarea id="diff-left" rows="8" class="w-full p-3 border rounded-lg font-mono text-sm" placeholder="Original"></textarea>
+                    <textarea id="diff-right" rows="8" class="w-full p-3 border rounded-lg font-mono text-sm" placeholder="Modified"></textarea>
+                </div>
+                <button onclick="compareText()" class="w-full bg-slate-800 text-white py-3 rounded-lg font-bold hover:bg-slate-900 transition">Compare Now</button>
+                <div id="diff-result" class="p-4 bg-white border rounded-lg font-mono text-sm whitespace-pre-wrap overflow-x-auto min-h-[100px]"></div>
+            </div>
+
+            <div id="json-tab" class="tab-content space-y-4">
+                <h2 class="text-xl font-bold text-slate-800">JSON Tools</h2>
+                <textarea id="json-input" rows="8" class="w-full p-3 border rounded-lg font-mono text-sm" placeholder="Paste JSON here..."></textarea>
+                <div class="flex gap-2">
+                    <button onclick="formatJSON(4)" class="flex-1 bg-indigo-500 text-white py-2 rounded-lg font-bold">Prettify (4 Space)</button>
+                    <button onclick="formatJSON(0)" class="flex-1 bg-slate-600 text-white py-2 rounded-lg font-bold">Minify</button>
+                </div>
+            </div>
+
+            <div id="unix-tab" class="tab-content space-y-4">
+                <h2 class="text-xl font-bold text-slate-800">Unix Timestamp Converter</h2>
+                <div class="flex gap-2">
+                    <input type="number" id="unix-input" class="flex-1 p-3 border rounded-lg font-mono" placeholder="1705568400">
+                    <button onclick="convertUnix()" class="bg-indigo-500 text-white px-6 rounded-lg font-bold">Convert</button>
+                </div>
+                <div id="unix-output" class="p-8 bg-indigo-50 rounded-xl text-center text-3xl font-bold text-indigo-700 border-2 border-indigo-100 border-dashed"> - </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        /**
+         * ------------------------------------------------------------------
+         * METADATA SECTION (คุณสามารถแยกตัวแปรเหล่านี้ออกเป็นไฟล์ data.js ได้)
+         * ------------------------------------------------------------------
+         */
+        const MOCK_DATA = {
+            firstNames: ["กิตติศักดิ์", "จิราพร", "นพดล", "พรทิพย์", "สมชาย", "วิลาวัลย์", "อานนท์", "สุภาวดี"],
+            lastNames: ["มั่นคง", "แสนสุข", "ใจดี", "รุ่งเรือง", "ชาญชัย", "เจริญผล", "บารมีธรรม", "เลิศวิจิตร"],
+            domains: ["gmail.com", "hotmail.com", "yahoo.com", "outlook.co.th", "devmail.io"],
+            phonePrefix: ["081", "082", "089", "091", "095", "061"]
+        };
+
+        // --- Navigation ---
+        function openTab(evt, tabName) {
+            document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // --- Mock Data Logic ---
+        function generateAll() {
+            // Thai ID
+            let id = "";
+            for (let i = 0; i < 12; i++) id += Math.floor(Math.random() * 10);
+            let sum = 0;
+            for (let i = 0; i < 12; i++) sum += parseInt(id[i]) * (13 - i);
+            const thaiId = id + ((11 - (sum % 11)) % 10);
+
+            // Phone
+            const prefix = MOCK_DATA.phonePrefix[Math.floor(Math.random() * MOCK_DATA.phonePrefix.length)];
+            const suffix = Math.floor(1000000 + Math.random() * 9000000);
+            const phone = prefix + suffix;
+
+            // Name & Email
+            const fname = MOCK_DATA.firstNames[Math.floor(Math.random() * MOCK_DATA.firstNames.length)];
+            const lname = MOCK_DATA.lastNames[Math.floor(Math.random() * MOCK_DATA.lastNames.length)];
+            const domain = MOCK_DATA.domains[Math.floor(Math.random() * MOCK_DATA.domains.length)];
+            const email = Math.random().toString(36).substring(7) + "@" + domain;
+
+            // Display
+            document.getElementById("out-id").innerText = thaiId;
+            document.getElementById("out-name").innerText = fname + " " + lname;
+            document.getElementById("out-phone").innerText = phone;
+            document.getElementById("out-email").innerText = email;
+            document.getElementById("out-uuid").innerText = crypto.randomUUID();
+        }
+
+        // --- SQL Converter (Fixed Version) ---
+        function convertSQL() {
+            const input = document.getElementById("sql-input").value;
+            let varName = "";
+            const match = input.match(/(?:StringBuilder|String|var)\s+(\w+)\s*=/);
+            if (match) varName = match[1];
+
+            let clean = input
+                .replace(/^(.*StringBuilder|.*String|.*var).*$/gm, "")
+                .replace(/\.append\s*\(/g, "")
+                .replace(/^.*?(SELECT|INSERT|UPDATE|DELETE|FROM|WHERE|AND|OR|LEFT|INNER|JOIN|ORDER|GROUP|LIMIT|SET|VALUES)/gi, "$1");
+
+            if (varName) {
+                const varRegex = new RegExp("^\\s*" + varName, "gm");
+                clean = clean.replace(varRegex, "");
+            }
+
+            clean = clean
+                .replace(/\s*"\s*\)?\s*;?\s*$/gm, "")
+                .replace(/"\s*\+\s*$/gm, "")
+                .replace(/"/g, "")
+                .replace(/\);/g, "")
+                .split("\n")
+                .map(l => l.trim())
+                .filter(l => l.length > 0)
+                .join("\n");
+
+            document.getElementById("sql-output").value = clean;
+        }
+
+        // --- Diff Checker ---
+        function compareText() {
+            let l = document.getElementById("diff-left").value;
+            let r = document.getElementById("diff-right").value;
+            try { l = JSON.stringify(JSON.parse(l), null, 2); r = JSON.stringify(JSON.parse(r), null, 2); } catch (e) {}
+            
+            const diff = Diff.diffChars(l, r);
+            const res = document.getElementById("diff-result");
+            res.innerHTML = "";
+            diff.forEach(part => {
+                const span = document.createElement("span");
+                if (part.added) span.className = "diff-added";
+                if (part.removed) span.className = "diff-removed";
+                span.appendChild(document.createTextNode(part.value));
+                res.appendChild(span);
+            });
+        }
+
+        // --- JSON & Unix ---
+        function formatJSON(space) {
+            try {
+                const obj = JSON.parse(document.getElementById("json-input").value);
+                document.getElementById("json-input").value = JSON.stringify(obj, null, space);
+            } catch (e) { alert("Invalid JSON"); }
+        }
+        function convertUnix() {
+            const v = document.getElementById("unix-input").value;
+            if (v) document.getElementById("unix-output").innerText = new Date(v * 1000).toLocaleString("th-TH");
+        }
+
+        // --- Copy Utils ---
+        function copyToClipboard(id) {
+            const text = document.getElementById(id).innerText;
+            if (text !== "-") {
+                navigator.clipboard.writeText(text);
+                showToast();
+            }
+        }
+        function copyArea(id) {
+            const text = document.getElementById(id).value;
+            if (text) {
+                navigator.clipboard.writeText(text);
+                showToast();
+            }
+        }
+        function showToast() { alert("คัดลอกลง Clipboard แล้ว!"); }
+    </script>
+</body>
+</html>
