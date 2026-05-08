@@ -2,7 +2,7 @@
 <html lang="th">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>Dev Toolkit</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Share+Tech+Mono&display=swap"
@@ -10,6 +10,7 @@
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/5.1.0/diff.min.js"></script>
     <style>
+      /* ── BASE (Cyber Blue default) ── */
       :root {
         --bg: #050b14;
         --panel: #0d1b2a;
@@ -19,8 +20,294 @@
         --accent3: #ff6b35;
         --text: #c8e0f4;
         --text-dim: #4a7fa5;
-        --glow: 0 0 20px rgba(0, 212, 255, 0.3);
-        --glow2: 0 0 20px rgba(0, 255, 157, 0.3);
+        --text-on-panel: #c8e0f4;
+        --title-color: #ffffff;
+        --input-bg: rgba(0, 0, 0, 0.4);
+        --card-bg: rgba(0, 0, 0, 0.35);
+        --btn-primary-bg: linear-gradient(135deg, #005f8a, #007ab5);
+        --btn-primary-border: rgba(0, 212, 255, 0.3);
+        --btn-primary-text: #fff;
+        --btn-green-bg: linear-gradient(135deg, #004d32, #007a50);
+        --btn-green-border: rgba(0, 255, 157, 0.3);
+        --btn-green-text: #fff;
+        --btn-ghost-bg: rgba(0, 212, 255, 0.08);
+        --btn-ghost-border: rgba(0, 212, 255, 0.2);
+        --btn-ghost-text: var(--accent);
+        --btn-ghost-hover: rgba(0, 212, 255, 0.15);
+        --btn-danger-bg: rgba(255, 80, 80, 0.12);
+        --btn-danger-border: rgba(255, 80, 80, 0.3);
+        --btn-danger-text: #ff8888;
+        --btn-danger-hover: rgba(255, 80, 80, 0.22);
+        --tab-active-bg: rgba(0, 212, 255, 0.12);
+        --tab-active-border: rgba(0, 212, 255, 0.25);
+        --tab-hover-bg: rgba(0, 212, 255, 0.08);
+        --theme-btn-active-bg: rgba(0, 212, 255, 0.1);
+        --output-color: var(--accent2);
+        --cron-expr-shadow: 0 0 12px rgba(0, 212, 255, 0.5);
+        --hero-glow-color: rgba(0, 212, 255, 0.15);
+        --grid-line: rgba(0, 212, 255, 0.04);
+        --scanline-opacity: 0.03;
+        --result-value-color: #ffffff;
+      }
+      [data-theme="cyberpunk"] {
+        --bg: #0a0010;
+        --panel: #130020;
+        --border: #5a0080;
+        --accent: #ff00ff;
+        --accent2: #00ffff;
+        --accent3: #ffff00;
+        --text: #f0d0ff;
+        --text-dim: #8040a0;
+        --text-on-panel: #f0d0ff;
+        --title-color: #ffffff;
+        --input-bg: rgba(0, 0, 0, 0.5);
+        --card-bg: rgba(10, 0, 20, 0.6);
+        --btn-primary-bg: linear-gradient(135deg, #600080, #9000c0);
+        --btn-primary-border: rgba(255, 0, 255, 0.4);
+        --btn-primary-text: #fff;
+        --btn-green-bg: linear-gradient(135deg, #006080, #009090);
+        --btn-green-border: rgba(0, 255, 255, 0.4);
+        --btn-green-text: #fff;
+        --btn-ghost-bg: rgba(255, 0, 255, 0.08);
+        --btn-ghost-border: rgba(255, 0, 255, 0.25);
+        --btn-ghost-text: #ff00ff;
+        --btn-ghost-hover: rgba(255, 0, 255, 0.18);
+        --btn-danger-bg: rgba(255, 255, 0, 0.1);
+        --btn-danger-border: rgba(255, 255, 0, 0.3);
+        --btn-danger-text: #cccc00;
+        --btn-danger-hover: rgba(255, 255, 0, 0.2);
+        --tab-active-bg: rgba(255, 0, 255, 0.12);
+        --tab-active-border: rgba(255, 0, 255, 0.3);
+        --tab-hover-bg: rgba(255, 0, 255, 0.08);
+        --theme-btn-active-bg: rgba(255, 0, 255, 0.12);
+        --output-color: var(--accent2);
+        --cron-expr-shadow: 0 0 12px rgba(255, 0, 255, 0.5);
+        --hero-glow-color: rgba(255, 0, 255, 0.15);
+        --grid-line: rgba(255, 0, 255, 0.06);
+        --result-value-color: #f0d0ff;
+      }
+      [data-theme="matrix"] {
+        --bg: #000800;
+        --panel: #001200;
+        --border: #003800;
+        --accent: #00ff41;
+        --accent2: #39ff14;
+        --accent3: #00cc33;
+        --text: #a0ffb0;
+        --text-dim: #2a7a3a;
+        --text-on-panel: #a0ffb0;
+        --title-color: #00ff41;
+        --input-bg: rgba(0, 10, 0, 0.6);
+        --card-bg: rgba(0, 15, 0, 0.5);
+        --btn-primary-bg: linear-gradient(135deg, #003a10, #006020);
+        --btn-primary-border: rgba(0, 255, 65, 0.35);
+        --btn-primary-text: #00ff41;
+        --btn-green-bg: linear-gradient(135deg, #004020, #008040);
+        --btn-green-border: rgba(57, 255, 20, 0.35);
+        --btn-green-text: #39ff14;
+        --btn-ghost-bg: rgba(0, 255, 65, 0.07);
+        --btn-ghost-border: rgba(0, 255, 65, 0.22);
+        --btn-ghost-text: #00ff41;
+        --btn-ghost-hover: rgba(0, 255, 65, 0.15);
+        --btn-danger-bg: rgba(0, 200, 40, 0.1);
+        --btn-danger-border: rgba(0, 200, 40, 0.3);
+        --btn-danger-text: #00cc28;
+        --btn-danger-hover: rgba(0, 200, 40, 0.2);
+        --tab-active-bg: rgba(0, 255, 65, 0.1);
+        --tab-active-border: rgba(0, 255, 65, 0.3);
+        --tab-hover-bg: rgba(0, 255, 65, 0.07);
+        --theme-btn-active-bg: rgba(0, 255, 65, 0.1);
+        --output-color: var(--accent2);
+        --cron-expr-shadow: 0 0 12px rgba(0, 255, 65, 0.5);
+        --hero-glow-color: rgba(0, 255, 65, 0.15);
+        --grid-line: rgba(0, 255, 65, 0.06);
+        --result-value-color: #a0ffb0;
+      }
+      [data-theme="sunset"] {
+        --bg: #100510;
+        --panel: #1a0a1a;
+        --border: #5a1a3a;
+        --accent: #ff6b9d;
+        --accent2: #ffd700;
+        --accent3: #ff4500;
+        --text: #ffd0e8;
+        --text-dim: #9a5070;
+        --text-on-panel: #ffd0e8;
+        --title-color: #ffffff;
+        --input-bg: rgba(0, 0, 0, 0.45);
+        --card-bg: rgba(20, 5, 15, 0.6);
+        --btn-primary-bg: linear-gradient(135deg, #7a1a40, #b02060);
+        --btn-primary-border: rgba(255, 107, 157, 0.4);
+        --btn-primary-text: #fff;
+        --btn-green-bg: linear-gradient(135deg, #7a5a00, #c08000);
+        --btn-green-border: rgba(255, 215, 0, 0.4);
+        --btn-green-text: #fff;
+        --btn-ghost-bg: rgba(255, 107, 157, 0.08);
+        --btn-ghost-border: rgba(255, 107, 157, 0.25);
+        --btn-ghost-text: #ff6b9d;
+        --btn-ghost-hover: rgba(255, 107, 157, 0.18);
+        --btn-danger-bg: rgba(255, 69, 0, 0.12);
+        --btn-danger-border: rgba(255, 69, 0, 0.3);
+        --btn-danger-text: #ff7744;
+        --btn-danger-hover: rgba(255, 69, 0, 0.22);
+        --tab-active-bg: rgba(255, 107, 157, 0.12);
+        --tab-active-border: rgba(255, 107, 157, 0.3);
+        --tab-hover-bg: rgba(255, 107, 157, 0.08);
+        --theme-btn-active-bg: rgba(255, 107, 157, 0.12);
+        --output-color: var(--accent2);
+        --cron-expr-shadow: 0 0 12px rgba(255, 107, 157, 0.5);
+        --hero-glow-color: rgba(255, 107, 157, 0.15);
+        --grid-line: rgba(255, 107, 157, 0.05);
+        --result-value-color: #ffd0e8;
+      }
+      [data-theme="dracula"] {
+        --bg: #282a36;
+        --panel: #1e1f29;
+        --border: #44475a;
+        --accent: #bd93f9;
+        --accent2: #50fa7b;
+        --accent3: #ffb86c;
+        --text: #f8f8f2;
+        --text-dim: #6272a4;
+        --text-on-panel: #f8f8f2;
+        --title-color: #ffffff;
+        --input-bg: rgba(0, 0, 0, 0.25);
+        --card-bg: rgba(0, 0, 0, 0.2);
+        --btn-primary-bg: linear-gradient(135deg, #44475a, #6272a4);
+        --btn-primary-border: rgba(189, 147, 249, 0.4);
+        --btn-primary-text: #f8f8f2;
+        --btn-green-bg: linear-gradient(135deg, #1a4a2a, #2d7a45);
+        --btn-green-border: rgba(80, 250, 123, 0.4);
+        --btn-green-text: #50fa7b;
+        --btn-ghost-bg: rgba(189, 147, 249, 0.1);
+        --btn-ghost-border: rgba(189, 147, 249, 0.3);
+        --btn-ghost-text: #bd93f9;
+        --btn-ghost-hover: rgba(189, 147, 249, 0.2);
+        --btn-danger-bg: rgba(255, 85, 85, 0.12);
+        --btn-danger-border: rgba(255, 85, 85, 0.3);
+        --btn-danger-text: #ff5555;
+        --btn-danger-hover: rgba(255, 85, 85, 0.22);
+        --tab-active-bg: rgba(189, 147, 249, 0.15);
+        --tab-active-border: rgba(189, 147, 249, 0.4);
+        --tab-hover-bg: rgba(189, 147, 249, 0.1);
+        --theme-btn-active-bg: rgba(189, 147, 249, 0.15);
+        --output-color: #50fa7b;
+        --cron-expr-shadow: 0 0 12px rgba(189, 147, 249, 0.4);
+        --hero-glow-color: rgba(189, 147, 249, 0.15);
+        --grid-line: rgba(189, 147, 249, 0.04);
+        --result-value-color: #f8f8f2;
+      }
+      [data-theme="nord"] {
+        --bg: #2e3440;
+        --panel: #3b4252;
+        --border: #4c566a;
+        --accent: #88c0d0;
+        --accent2: #a3be8c;
+        --accent3: #ebcb8b;
+        --text: #eceff4;
+        --text-dim: #81a1c1;
+        --text-on-panel: #eceff4;
+        --title-color: #ffffff;
+        --input-bg: rgba(0, 0, 0, 0.2);
+        --card-bg: rgba(0, 0, 0, 0.15);
+        --btn-primary-bg: linear-gradient(135deg, #4c566a, #5e81ac);
+        --btn-primary-border: rgba(136, 192, 208, 0.4);
+        --btn-primary-text: #eceff4;
+        --btn-green-bg: linear-gradient(135deg, #2d3b2a, #4a6a3a);
+        --btn-green-border: rgba(163, 190, 140, 0.4);
+        --btn-green-text: #a3be8c;
+        --btn-ghost-bg: rgba(136, 192, 208, 0.1);
+        --btn-ghost-border: rgba(136, 192, 208, 0.3);
+        --btn-ghost-text: #88c0d0;
+        --btn-ghost-hover: rgba(136, 192, 208, 0.2);
+        --btn-danger-bg: rgba(191, 97, 106, 0.12);
+        --btn-danger-border: rgba(191, 97, 106, 0.3);
+        --btn-danger-text: #bf616a;
+        --btn-danger-hover: rgba(191, 97, 106, 0.22);
+        --tab-active-bg: rgba(136, 192, 208, 0.15);
+        --tab-active-border: rgba(136, 192, 208, 0.4);
+        --tab-hover-bg: rgba(136, 192, 208, 0.1);
+        --theme-btn-active-bg: rgba(136, 192, 208, 0.15);
+        --output-color: #a3be8c;
+        --cron-expr-shadow: 0 0 12px rgba(136, 192, 208, 0.4);
+        --hero-glow-color: rgba(136, 192, 208, 0.15);
+        --grid-line: rgba(136, 192, 208, 0.04);
+        --result-value-color: #eceff4;
+      }
+      [data-theme="solarized"] {
+        --bg: #002b36;
+        --panel: #073642;
+        --border: #1a5a6a;
+        --accent: #268bd2;
+        --accent2: #2aa198;
+        --accent3: #cb4b16;
+        --text: #839496;
+        --text-dim: #586e75;
+        --text-on-panel: #93a1a1;
+        --title-color: #fdf6e3;
+        --input-bg: rgba(0, 0, 0, 0.3);
+        --card-bg: rgba(0, 0, 0, 0.25);
+        --btn-primary-bg: linear-gradient(135deg, #073642, #124f60);
+        --btn-primary-border: rgba(38, 139, 210, 0.4);
+        --btn-primary-text: #268bd2;
+        --btn-green-bg: linear-gradient(135deg, #073a38, #0f5a56);
+        --btn-green-border: rgba(42, 161, 152, 0.4);
+        --btn-green-text: #2aa198;
+        --btn-ghost-bg: rgba(38, 139, 210, 0.08);
+        --btn-ghost-border: rgba(38, 139, 210, 0.25);
+        --btn-ghost-text: #268bd2;
+        --btn-ghost-hover: rgba(38, 139, 210, 0.18);
+        --btn-danger-bg: rgba(203, 75, 22, 0.12);
+        --btn-danger-border: rgba(203, 75, 22, 0.3);
+        --btn-danger-text: #cb4b16;
+        --btn-danger-hover: rgba(203, 75, 22, 0.22);
+        --tab-active-bg: rgba(38, 139, 210, 0.12);
+        --tab-active-border: rgba(38, 139, 210, 0.3);
+        --tab-hover-bg: rgba(38, 139, 210, 0.08);
+        --theme-btn-active-bg: rgba(38, 139, 210, 0.12);
+        --output-color: #2aa198;
+        --cron-expr-shadow: 0 0 12px rgba(38, 139, 210, 0.4);
+        --hero-glow-color: rgba(38, 139, 210, 0.15);
+        --grid-line: rgba(38, 139, 210, 0.05);
+        --result-value-color: #93a1a1;
+      }
+      [data-theme="light"] {
+        --bg: #eef2f7;
+        --panel: #ffffff;
+        --border: #c0cfe0;
+        --accent: #0055bb;
+        --accent2: #007a50;
+        --accent3: #cc4400;
+        --text: #1a2a3a;
+        --text-dim: #5570a0;
+        --text-on-panel: #1a2a3a;
+        --title-color: #0a1828;
+        --input-bg: #ffffff;
+        --card-bg: rgba(255, 255, 255, 0.85);
+        --btn-primary-bg: linear-gradient(135deg, #0044aa, #0066cc);
+        --btn-primary-border: rgba(0, 85, 187, 0.5);
+        --btn-primary-text: #fff;
+        --btn-green-bg: linear-gradient(135deg, #005a38, #008050);
+        --btn-green-border: rgba(0, 122, 80, 0.5);
+        --btn-green-text: #fff;
+        --btn-ghost-bg: rgba(0, 85, 187, 0.08);
+        --btn-ghost-border: rgba(0, 85, 187, 0.3);
+        --btn-ghost-text: #0055bb;
+        --btn-ghost-hover: rgba(0, 85, 187, 0.15);
+        --btn-danger-bg: rgba(200, 30, 30, 0.08);
+        --btn-danger-border: rgba(200, 30, 30, 0.3);
+        --btn-danger-text: #bb2020;
+        --btn-danger-hover: rgba(200, 30, 30, 0.15);
+        --tab-active-bg: rgba(0, 85, 187, 0.1);
+        --tab-active-border: rgba(0, 85, 187, 0.35);
+        --tab-hover-bg: rgba(0, 85, 187, 0.06);
+        --theme-btn-active-bg: rgba(0, 85, 187, 0.1);
+        --output-color: #005a38;
+        --cron-expr-shadow: 0 0 8px rgba(0, 85, 187, 0.2);
+        --hero-glow-color: rgba(0, 85, 187, 0.08);
+        --grid-line: rgba(0, 85, 187, 0.05);
+        --result-value-color: #0a1828;
+        --scanline-opacity: 0;
       }
 
       * {
@@ -28,29 +315,30 @@
         margin: 0;
         padding: 0;
       }
-
       body {
         font-family: "Kanit", sans-serif;
         background: var(--bg);
         color: var(--text);
         min-height: 100vh;
         overflow-x: hidden;
+        transition:
+          background 0.3s,
+          color 0.3s;
       }
 
-      /* ── ANIMATED HEADER ── */
+      /* HERO */
       .hero {
         position: relative;
         text-align: center;
-        padding: 48px 20px 36px;
+        padding: 38px 20px 26px;
         overflow: hidden;
       }
-
       .hero-grid {
         position: absolute;
         inset: 0;
         background-image:
-          linear-gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(0, 212, 255, 0.04) 1px, transparent 1px);
+          linear-gradient(var(--grid-line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
         background-size: 40px 40px;
         animation: gridScroll 20s linear infinite;
       }
@@ -62,7 +350,6 @@
           background-position: 40px 40px;
         }
       }
-
       .hero-glow {
         position: absolute;
         top: -60px;
@@ -72,7 +359,7 @@
         height: 200px;
         background: radial-gradient(
           ellipse,
-          rgba(0, 212, 255, 0.15) 0%,
+          var(--hero-glow-color) 0%,
           transparent 70%
         );
         animation: pulse 4s ease-in-out infinite;
@@ -88,19 +375,16 @@
           transform: translateX(-50%) scaleY(1.3);
         }
       }
-
       .hero-title {
         position: relative;
-        font-size: clamp(2.4rem, 6vw, 4.5rem);
+        font-size: clamp(2rem, 6vw, 3.8rem);
         font-weight: 600;
         letter-spacing: 0.08em;
         line-height: 1;
         display: inline-block;
       }
-
-      /* glitch layers */
       .hero-title .main {
-        color: #fff;
+        color: var(--title-color);
       }
       .hero-title .layer1 {
         position: absolute;
@@ -156,12 +440,10 @@
           opacity: 0;
         }
       }
-
-      /* typewriter subtitle */
       .hero-sub {
         position: relative;
         font-family: "Share Tech Mono", monospace;
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         color: var(--accent);
         margin-top: 10px;
         letter-spacing: 0.1em;
@@ -177,8 +459,6 @@
           width: 100%;
         }
       }
-
-      /* scan line overlay */
       .scanline {
         position: fixed;
         inset: 0;
@@ -188,93 +468,108 @@
           0deg,
           transparent,
           transparent 2px,
-          rgba(0, 0, 0, 0.03) 2px,
-          rgba(0, 0, 0, 0.03) 4px
+          rgba(0, 0, 0, var(--scanline-opacity, 0.03)) 2px,
+          rgba(0, 0, 0, var(--scanline-opacity, 0.03)) 4px
         );
       }
 
-      /* ── TABS ── */
+      /* THEME BAR */
+      .theme-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        background: var(--panel);
+        border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
+      }
+      .theme-label {
+        font-size: 0.7rem;
+        color: var(--text-dim);
+        font-family: "Share Tech Mono", monospace;
+        letter-spacing: 0.08em;
+        margin-right: 4px;
+        white-space: nowrap;
+      }
+      .theme-btn {
+        padding: 5px 12px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-dim);
+        font-size: 0.72rem;
+        font-family: "Kanit", sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+      .theme-btn:hover {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+      .theme-btn.active {
+        color: var(--accent);
+        border-color: var(--accent);
+        background: var(--theme-btn-active-bg);
+      }
+
+      /* TABS */
       .tab-bar {
         display: flex;
         flex-wrap: wrap;
-
         gap: 8px;
-
         padding: 12px;
-
         background: var(--panel);
-
         border-bottom: 1px solid var(--border);
-
         position: sticky;
         top: 0;
         z-index: 100;
       }
-
       .tab-btn {
         flex: 1 1 auto;
-
-        min-width: 140px;
-
-        padding: 12px 14px;
-
+        min-width: 110px;
+        padding: 10px 10px;
         border-radius: 10px;
-
         border: 1px solid transparent;
-
         background: rgba(255, 255, 255, 0.03);
-
         color: var(--text-dim);
-
         white-space: nowrap;
-
-        font-size: 0.82rem;
-
+        font-size: 0.76rem;
+        font-family: "Kanit", sans-serif;
+        cursor: pointer;
         transition: all 0.2s;
       }
-
       .tab-btn:hover {
         color: var(--accent);
-        background: rgba(0, 212, 255, 0.08);
+        background: var(--tab-hover-bg);
       }
-
       .tab-btn.active {
         color: var(--accent);
-
-        background: rgba(0, 212, 255, 0.12);
-
-        border-color: rgba(0, 212, 255, 0.25);
-
-        box-shadow: 0 0 12px rgba(0, 212, 255, 0.18);
+        background: var(--tab-active-bg);
+        border-color: var(--tab-active-border);
       }
-
-      /* MOBILE */
+      [data-theme="light"] .tab-btn {
+        background: rgba(0, 0, 0, 0.02);
+      }
       @media (max-width: 640px) {
         .tab-bar {
           display: grid;
-
           grid-template-columns: repeat(2, 1fr);
-
           gap: 6px;
-
           padding: 10px;
         }
-
         .tab-btn {
           min-width: unset;
-
           width: 100%;
-
-          font-size: 0.72rem;
-
-          padding: 10px;
+          font-size: 0.7rem;
+          padding: 9px;
         }
       }
 
-      /* ── PANELS ── */
+      /* PANELS */
       .tab-content {
         display: none;
-        padding: 28px 20px;
+        padding: 24px 20px;
         max-width: 1000px;
         margin: 0 auto;
       }
@@ -292,31 +587,30 @@
           transform: none;
         }
       }
-
       .panel-title {
-        font-size: 1.25rem;
+        font-size: 1.12rem;
         font-weight: 600;
-        color: #fff;
+        color: var(--title-color);
         margin-bottom: 4px;
       }
       .panel-sub {
-        font-size: 0.8rem;
+        font-size: 0.76rem;
         color: var(--text-dim);
-        margin-bottom: 20px;
+        margin-bottom: 16px;
       }
 
-      /* ── INPUTS ── */
+      /* INPUTS */
       textarea,
       input[type="text"],
       input[type="number"] {
         width: 100%;
-        background: rgba(0, 0, 0, 0.4);
+        background: var(--input-bg);
         border: 1px solid var(--border);
         border-radius: 8px;
         color: var(--text);
         font-family: "Share Tech Mono", monospace;
         font-size: 0.85rem;
-        padding: 12px 14px;
+        padding: 11px 13px;
         outline: none;
         transition:
           border-color 0.2s,
@@ -326,99 +620,109 @@
       textarea:focus,
       input:focus {
         border-color: var(--accent);
-        box-shadow: var(--glow);
+        box-shadow:
+          0 0 0 2px rgba(0, 0, 0, 0.05),
+          0 0 12px rgba(0, 0, 0, 0.05);
       }
 
-      /* ── BUTTONS ── */
+      /* BUTTONS — all use CSS vars */
       .btn {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 10px 20px;
+        padding: 9px 18px;
         border-radius: 8px;
-        border: none;
+        border: 1px solid transparent;
         cursor: pointer;
         font-family: "Kanit", sans-serif;
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         font-weight: 500;
         transition: all 0.2s;
+        white-space: nowrap;
       }
       .btn-primary {
-        background: linear-gradient(135deg, #005f8a, #007ab5);
-        color: #fff;
-        border: 1px solid rgba(0, 212, 255, 0.3);
+        background: var(--btn-primary-bg);
+        color: var(--btn-primary-text);
+        border-color: var(--btn-primary-border);
       }
       .btn-primary:hover {
-        box-shadow: var(--glow);
+        filter: brightness(1.15);
         transform: translateY(-1px);
       }
-
       .btn-green {
-        background: linear-gradient(135deg, #004d32, #007a50);
-        color: #fff;
-        border: 1px solid rgba(0, 255, 157, 0.3);
+        background: var(--btn-green-bg);
+        color: var(--btn-green-text);
+        border-color: var(--btn-green-border);
       }
       .btn-green:hover {
-        box-shadow: var(--glow2);
+        filter: brightness(1.15);
         transform: translateY(-1px);
       }
-
       .btn-ghost {
-        background: rgba(0, 212, 255, 0.08);
-        color: var(--accent);
-        border: 1px solid rgba(0, 212, 255, 0.2);
-        font-size: 0.78rem;
-        padding: 6px 14px;
+        background: var(--btn-ghost-bg);
+        color: var(--btn-ghost-text);
+        border-color: var(--btn-ghost-border);
+        font-size: 0.76rem;
+        padding: 6px 12px;
       }
       .btn-ghost:hover {
-        background: rgba(0, 212, 255, 0.15);
+        background: var(--btn-ghost-hover);
       }
-
+      .btn-danger {
+        background: var(--btn-danger-bg);
+        color: var(--btn-danger-text);
+        border-color: var(--btn-danger-border);
+        font-size: 0.76rem;
+        padding: 6px 12px;
+      }
+      .btn-danger:hover {
+        background: var(--btn-danger-hover);
+      }
       .btn-full {
         width: 100%;
         justify-content: center;
       }
 
-      /* ── OUTPUT BOXES ── */
+      /* OUTPUT */
       .output-mono {
-        background: rgba(0, 0, 0, 0.5);
+        background: var(--input-bg);
         border: 1px solid var(--border);
         border-radius: 8px;
-        padding: 14px;
+        padding: 13px;
         font-family: "Share Tech Mono", monospace;
         font-size: 0.85rem;
-        color: var(--accent2);
+        color: var(--output-color);
         white-space: pre-wrap;
         overflow-x: auto;
         min-height: 60px;
       }
 
+      /* RESULT ROWS */
       .result-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: rgba(0, 0, 0, 0.35);
+        background: var(--card-bg);
         border: 1px solid var(--border);
         border-radius: 8px;
-        padding: 10px 14px;
+        padding: 9px 13px;
         margin-bottom: 8px;
         transition: border-color 0.2s;
       }
       .result-row:hover {
-        border-color: rgba(0, 212, 255, 0.3);
+        border-color: var(--accent);
       }
       .result-label {
-        font-size: 0.78rem;
+        font-size: 0.75rem;
         color: var(--text-dim);
       }
       .result-value {
         font-family: "Share Tech Mono", monospace;
-        font-size: 0.88rem;
-        color: #fff;
+        font-size: 0.86rem;
+        color: var(--result-value-color);
         margin-left: 8px;
       }
 
-      /* ── GRID HELPERS ── */
       .grid-2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -429,29 +733,30 @@
           grid-template-columns: 1fr;
         }
       }
-
       .space-y > * + * {
-        margin-top: 14px;
+        margin-top: 12px;
       }
       .flex-row {
         display: flex;
         gap: 10px;
         align-items: center;
       }
-      .flex-row-end {
-        display: flex;
-        gap: 10px;
-        justify-content: flex-end;
-        align-items: center;
-      }
       .section-header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        margin-bottom: 16px;
+        margin-bottom: 14px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: flex-end;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
       }
 
-      /* ── CRON ── */
+      /* CRON */
       .cron-grid {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
@@ -462,9 +767,8 @@
           grid-template-columns: 1fr 1fr;
         }
       }
-
       .cron-field label {
-        font-size: 0.72rem;
+        font-size: 0.7rem;
         color: var(--accent);
         font-family: "Share Tech Mono", monospace;
         display: block;
@@ -473,21 +777,20 @@
       }
       .cron-field select {
         width: 100%;
-        background: rgba(0, 0, 0, 0.4);
+        background: var(--input-bg);
         border: 1px solid var(--border);
         border-radius: 6px;
         color: var(--text);
-        font-size: 0.82rem;
-        padding: 8px 10px;
+        font-size: 0.8rem;
+        padding: 7px 10px;
         outline: none;
         cursor: pointer;
       }
       .cron-field select:focus {
         border-color: var(--accent);
       }
-
       .cron-result {
-        background: rgba(0, 0, 0, 0.5);
+        background: var(--card-bg);
         border: 1px solid var(--border);
         border-radius: 10px;
         padding: 18px 20px;
@@ -495,24 +798,24 @@
       }
       .cron-expr {
         font-family: "Share Tech Mono", monospace;
-        font-size: 1.5rem;
+        font-size: 1.4rem;
         color: var(--accent);
         letter-spacing: 0.15em;
-        text-shadow: 0 0 12px rgba(0, 212, 255, 0.5);
+        text-shadow: var(--cron-expr-shadow);
       }
       .cron-human {
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         color: var(--accent2);
         margin-top: 8px;
-        min-height: 24px;
+        min-height: 22px;
       }
       .cron-next {
-        font-size: 0.78rem;
+        font-size: 0.76rem;
         color: var(--text-dim);
         margin-top: 6px;
       }
 
-      /* ── REGEX ── */
+      /* REGEX */
       .regex-input-wrap {
         display: flex;
         gap: 8px;
@@ -534,7 +837,6 @@
         flex: 1;
         border-radius: 8px 0 0 8px !important;
       }
-
       .highlighted-text {
         line-height: 1.8;
         font-family: "Share Tech Mono", monospace;
@@ -547,19 +849,13 @@
         color: #ffcbb5;
         padding: 0 1px;
       }
-      .regex-group {
-        background: rgba(0, 255, 157, 0.2);
-        border-color: rgba(0, 255, 157, 0.4);
-        color: #aaffdb;
-      }
-
       .match-info {
-        background: rgba(0, 0, 0, 0.35);
+        background: var(--card-bg);
         border: 1px solid var(--border);
         border-radius: 8px;
         padding: 12px 14px;
         font-family: "Share Tech Mono", monospace;
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: var(--text-dim);
       }
       .match-info .match-item {
@@ -571,7 +867,7 @@
         padding-left: 16px;
       }
 
-      /* ── DIFF ── */
+      /* DIFF */
       .diff-added {
         background: rgba(0, 255, 157, 0.2);
         color: #aaffdb;
@@ -584,15 +880,12 @@
         border-radius: 2px;
       }
 
-      /* ── KUBECTL ── */
-      .kubectl-search {
-        margin-bottom: 20px;
-      }
+      /* KUBECTL */
       .kubectl-group {
-        margin-bottom: 28px;
+        margin-bottom: 26px;
       }
       .kubectl-group-title {
-        font-size: 0.72rem;
+        font-size: 0.7rem;
         font-family: "Share Tech Mono", monospace;
         color: var(--accent);
         letter-spacing: 0.1em;
@@ -602,44 +895,57 @@
         text-transform: uppercase;
       }
       .cmd-card {
-        background: rgba(0, 0, 0, 0.35);
+        background: var(--card-bg);
         border: 1px solid var(--border);
         border-radius: 8px;
-        padding: 12px 14px;
+        padding: 11px 13px;
         margin-bottom: 8px;
-        transition:
-          border-color 0.2s,
-          background 0.2s;
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
         gap: 12px;
+        transition: border-color 0.2s;
       }
       .cmd-card:hover {
-        border-color: rgba(0, 212, 255, 0.25);
-        background: rgba(0, 212, 255, 0.03);
-      }
-      .cmd-card.hidden-card {
-        display: none;
-      }
-      .cmd-text {
-        flex: 1;
+        border-color: var(--accent);
       }
       .cmd-code {
         font-family: "Share Tech Mono", monospace;
-        font-size: 0.82rem;
+        font-size: 0.8rem;
         color: var(--accent2);
         margin-bottom: 4px;
       }
       .cmd-desc {
-        font-size: 0.78rem;
+        font-size: 0.76rem;
         color: var(--text-dim);
       }
-      .cmd-copy {
-        flex-shrink: 0;
+
+      /* SQL */
+      #sql-error {
+        background: rgba(255, 80, 80, 0.1);
+        border: 1px solid rgba(255, 80, 80, 0.3);
+        border-radius: 8px;
+        padding: 10px 13px;
+        font-size: 0.83rem;
+        color: #ffaaaa;
+        display: none;
+      }
+      #sql-error.visible {
+        display: block;
+      }
+      .mode-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.8rem;
+        color: var(--text-dim);
+        cursor: pointer;
+      }
+      .mode-label input {
+        accent-color: var(--accent);
       }
 
-      /* ── TOAST ── */
+      /* TOAST */
       .toast {
         position: fixed;
         bottom: 24px;
@@ -649,9 +955,8 @@
         color: var(--accent);
         padding: 10px 18px;
         border-radius: 8px;
-        font-size: 0.85rem;
+        font-size: 0.83rem;
         font-family: "Share Tech Mono", monospace;
-        box-shadow: var(--glow);
         opacity: 0;
         transform: translateY(10px);
         transition: all 0.3s;
@@ -663,40 +968,29 @@
         transform: none;
       }
 
-      /* ── SQL specific ── */
-      #sql-error {
-        background: rgba(255, 80, 80, 0.1);
-        border: 1px solid rgba(255, 80, 80, 0.3);
+      /* REF BOX */
+      .ref-box {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
         border-radius: 8px;
-        padding: 10px 14px;
-        font-size: 0.85rem;
-        color: #ffaaaa;
-        display: none;
+        padding: 14px;
       }
-      #sql-error.visible {
-        display: block;
+      .ref-box-title {
+        font-size: 0.7rem;
+        color: var(--accent);
+        font-family: "Share Tech Mono", monospace;
+        margin-bottom: 8px;
       }
-      .mode-label {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 0.82rem;
+      .ref-box-body {
+        font-family: "Share Tech Mono", monospace;
+        font-size: 0.76rem;
         color: var(--text-dim);
-        cursor: pointer;
-      }
-      .mode-label input {
-        accent-color: var(--accent);
+        line-height: 2;
       }
 
-      /* ── JSON ── */
-      #json-input {
-        color: var(--accent2);
-      }
-
-      /* scroll */
       ::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
+        width: 5px;
+        height: 5px;
       }
       ::-webkit-scrollbar-track {
         background: var(--bg);
@@ -710,7 +1004,6 @@
   <body>
     <div class="scanline"></div>
 
-    <!-- ══════════════════ ANIMATED HEADER ══════════════════ -->
     <div class="hero">
       <div class="hero-grid"></div>
       <div class="hero-glow"></div>
@@ -722,7 +1015,68 @@
       <div class="hero-sub" id="hero-sub"></div>
     </div>
 
-    <!-- ══════════════════ TAB BAR ══════════════════ -->
+    <!-- THEME BAR -->
+    <div class="theme-bar">
+      <span class="theme-label">🎨 THEME:</span>
+      <button
+        class="theme-btn"
+        data-theme-id="default"
+        onclick="setTheme('default', this)"
+      >
+        Cyber Blue
+      </button>
+      <button
+        class="theme-btn"
+        data-theme-id="cyberpunk"
+        onclick="setTheme('cyberpunk', this)"
+      >
+        Cyberpunk
+      </button>
+      <button
+        class="theme-btn"
+        data-theme-id="matrix"
+        onclick="setTheme('matrix', this)"
+      >
+        Matrix
+      </button>
+      <button
+        class="theme-btn"
+        data-theme-id="sunset"
+        onclick="setTheme('sunset', this)"
+      >
+        Sunset
+      </button>
+      <button
+        class="theme-btn"
+        data-theme-id="dracula"
+        onclick="setTheme('dracula', this)"
+      >
+        Dracula
+      </button>
+      <button
+        class="theme-btn"
+        data-theme-id="nord"
+        onclick="setTheme('nord', this)"
+      >
+        Nord
+      </button>
+      <button
+        class="theme-btn"
+        data-theme-id="solarized"
+        onclick="setTheme('solarized', this)"
+      >
+        Solarized
+      </button>
+      <button
+        class="theme-btn"
+        data-theme-id="light"
+        onclick="setTheme('light', this)"
+      >
+        ☀️ Light
+      </button>
+    </div>
+
+    <!-- TAB BAR -->
     <div class="tab-bar">
       <button class="tab-btn active" onclick="openTab(event, 'random-tab')">
         🎲 Mock Data
@@ -753,9 +1107,8 @@
       </button>
     </div>
 
-    <!-- ══════════════════ PANELS ══════════════════ -->
     <div style="max-width: 1000px; margin: 0 auto">
-      <!-- ── MOCK DATA ── -->
+      <!-- MOCK DATA -->
       <div id="random-tab" class="tab-content active">
         <div class="grid-2" style="align-items: start">
           <div>
@@ -763,17 +1116,25 @@
             <div class="panel-sub">
               สร้างข้อมูลจำลองสำหรับทดสอบระบบ · Thai Localization
             </div>
-            <button class="btn btn-primary btn-full" onclick="generateAll()">
-              ✨ สุ่มข้อมูลใหม่
-            </button>
+            <div style="display: flex; gap: 8px; margin-top: 4px">
+              <button
+                class="btn btn-primary"
+                style="flex: 1"
+                onclick="generateAll()"
+              >
+                ✨ สุ่มข้อมูลใหม่
+              </button>
+              <button class="btn btn-danger" onclick="clearMock()">
+                ✖ Clear
+              </button>
+            </div>
           </div>
           <div class="space-y">
             <div class="result-row">
               <span
                 ><span class="result-label">บัตรประชาชน</span>
                 <span class="result-value" id="out-id">—</span></span
-              >
-              <button class="btn btn-ghost" onclick="copyVal('out-id')">
+              ><button class="btn btn-ghost" onclick="copyVal('out-id')">
                 Copy
               </button>
             </div>
@@ -781,8 +1142,7 @@
               <span
                 ><span class="result-label">ชื่อ-นามสกุล</span>
                 <span class="result-value" id="out-name">—</span></span
-              >
-              <button class="btn btn-ghost" onclick="copyVal('out-name')">
+              ><button class="btn btn-ghost" onclick="copyVal('out-name')">
                 Copy
               </button>
             </div>
@@ -790,8 +1150,7 @@
               <span
                 ><span class="result-label">เบอร์โทรศัพท์</span>
                 <span class="result-value" id="out-phone">—</span></span
-              >
-              <button class="btn btn-ghost" onclick="copyVal('out-phone')">
+              ><button class="btn btn-ghost" onclick="copyVal('out-phone')">
                 Copy
               </button>
             </div>
@@ -799,8 +1158,7 @@
               <span
                 ><span class="result-label">อีเมล</span>
                 <span class="result-value" id="out-email">—</span></span
-              >
-              <button class="btn btn-ghost" onclick="copyVal('out-email')">
+              ><button class="btn btn-ghost" onclick="copyVal('out-email')">
                 Copy
               </button>
             </div>
@@ -810,11 +1168,10 @@
                 <span
                   class="result-value"
                   id="out-uuid"
-                  style="font-size: 0.75rem"
+                  style="font-size: 0.73rem"
                   >—</span
                 ></span
-              >
-              <button class="btn btn-ghost" onclick="copyVal('out-uuid')">
+              ><button class="btn btn-ghost" onclick="copyVal('out-uuid')">
                 Copy
               </button>
             </div>
@@ -822,90 +1179,75 @@
         </div>
       </div>
 
-      <!-- ── SQL ── -->
+      <!-- SQL -->
       <div id="sql-tab" class="tab-content">
-        <div class="section-header">
-          <div>
-            <div class="panel-title">Java String Concat → Clean SQL</div>
-            <div class="panel-sub">
-              รองรับ StringBuilder.append(), String + concat, multiline
-            </div>
-          </div>
-          <div style="display: flex; gap: 8px">
-            <button
-              class="btn btn-ghost"
-              onclick="clearSQL()"
-              style="color: #ff8888; border-color: rgba(255, 80, 80, 0.3)"
-            >
-              🗑 Clear
-            </button>
-            <button class="btn btn-ghost" onclick="copyArea('sql-output')">
-              Copy Result
-            </button>
-          </div>
+        <div class="panel-title">Java String Concat → Clean SQL</div>
+        <!-- <div class="panel-sub">รองรับ StringBuilder.append(), String + concat, multiline</div> -->
+        <div class="panel-sub">
+          รองรับ Java String concat และ SQL extraction
         </div>
-        <div class="flex-row" style="margin-bottom: 12px">
-          <label class="mode-label"
-            ><input
-              type="radio"
-              name="sql-mode"
-              value="multiline"
-              checked
-              onchange="updateSqlPlaceholder(this.value)"
-            />
-            Multi-line (append)</label
-          >
+        <div class="toolbar">
+          <!-- <label class="mode-label"><input type="radio" name="sql-mode" value="multiline"  onchange="updateSqlPlaceholder(this.value)"/> Multi-line (append)</label> -->
           <label class="mode-label"
             ><input
               type="radio"
               name="sql-mode"
               value="concat"
-              onchange="updateSqlPlaceholder(this.value)"
+              checked
+              onchange="updateSqlPlaceholder()"
             />
             Single-line concat</label
           >
+          <button class="btn btn-ghost" onclick="copyArea('sql-output')">
+            📋 Copy Result
+          </button>
+          <button class="btn btn-danger" onclick="clearSQL()">
+            ✖ Clear All
+          </button>
         </div>
         <textarea
           id="sql-input"
           rows="8"
-          placeholder='StringBuilder sql = new StringBuilder();&#10;sql.append("SELECT u.id, u.name ");&#10;sql.append("FROM users u ");&#10;// join&#10;sql.append("WHERE u.active = 1 ");'
+          placeholder='String sql = "SELECT u.id " +
+              "FROM users u " +
+              "WHERE u.active = 1";'
         ></textarea>
         <div style="margin-top: 10px; display: flex; gap: 8px">
           <button class="btn btn-green" style="flex: 1" onclick="convertSQL()">
             ▶ Clean SQL
           </button>
-          <button
-            class="btn btn-ghost"
-            onclick="clearSQL()"
-            style="color: #ff8888; border-color: rgba(255, 80, 80, 0.3)"
-          >
-            🗑 Clear
-          </button>
+          <!-- <button class="btn btn-danger" onclick="clearSQL()">✖ Clear</button> -->
         </div>
         <div id="sql-error" style="margin-top: 10px"></div>
         <textarea
           id="sql-output"
           rows="10"
           readonly
-          style="margin-top: 10px; color: #00ff9d"
+          style="margin-top: 10px; color: var(--output-color)"
         ></textarea>
       </div>
 
-      <!-- ── DIFF ── -->
+      <!-- DIFF -->
       <div id="compare-tab" class="tab-content">
-        <div class="panel-title">Compare Text / JSON</div>
-        <div class="panel-sub">เปรียบเทียบข้อความ หรือ JSON อัตโนมัติ</div>
+        <div class="section-header">
+          <div>
+            <div class="panel-title">Compare Text / JSON</div>
+            <div class="panel-sub">เปรียบเทียบข้อความ หรือ JSON อัตโนมัติ</div>
+          </div>
+          <button class="btn btn-danger" onclick="clearDiff()">
+            ✖ Clear All
+          </button>
+        </div>
         <div class="grid-2">
           <textarea id="diff-left" rows="8" placeholder="Original"></textarea>
           <textarea id="diff-right" rows="8" placeholder="Modified"></textarea>
         </div>
-        <button
-          class="btn btn-primary btn-full"
-          style="margin-top: 10px"
-          onclick="compareText()"
-        >
-          Compare Now
-        </button>
+        <div style="margin-top: 10px; display: flex; gap: 8px">
+          <button class="btn btn-primary btn-full" onclick="compareText()">
+            Compare Now
+          </button>
+          <!-- <button class="btn btn-danger" onclick="clearDiff()">✖ Clear</button> -->
+        </div>
         <div
           id="diff-result"
           class="output-mono"
@@ -918,14 +1260,20 @@
         ></div>
       </div>
 
-      <!-- ── JSON ── -->
+      <!-- JSON -->
       <div id="json-tab" class="tab-content">
-        <div class="panel-title">JSON Tools</div>
-        <div class="panel-sub">Prettify / Minify JSON</div>
+        <div class="section-header">
+          <div>
+            <div class="panel-title">JSON Tools</div>
+            <div class="panel-sub">Prettify / Minify JSON</div>
+          </div>
+          <button class="btn btn-danger" onclick="clearJSON()">✖ Clear</button>
+        </div>
         <textarea
           id="json-input"
           rows="10"
           placeholder="Paste JSON here..."
+          style="color: var(--output-color)"
         ></textarea>
         <div class="flex-row" style="margin-top: 10px">
           <button
@@ -938,13 +1286,19 @@
           <button class="btn btn-ghost" style="flex: 1" onclick="formatJSON(0)">
             Minify
           </button>
+          <!-- <button class="btn btn-danger" onclick="clearJSON()">✖ Clear</button> -->
         </div>
       </div>
 
-      <!-- ── UNIX ── -->
+      <!-- UNIX -->
       <div id="unix-tab" class="tab-content">
-        <div class="panel-title">Unix Timestamp Converter</div>
-        <div class="panel-sub">แปลง Unix timestamp เป็นวันเวลา</div>
+        <div class="section-header">
+          <div>
+            <div class="panel-title">Unix Timestamp Converter</div>
+            <div class="panel-sub">แปลง Unix timestamp เป็นวันเวลา</div>
+          </div>
+          <button class="btn btn-danger" onclick="clearUnix()">✖ Clear</button>
+        </div>
         <div class="flex-row">
           <input
             type="number"
@@ -956,26 +1310,30 @@
             Convert
           </button>
           <button class="btn btn-ghost" onclick="nowUnix()">Now</button>
+          <!-- <button class="btn btn-danger" onclick="clearUnix()">✖</button> -->
         </div>
-        <div
-          id="unix-output"
-          class="cron-result"
-          style="margin-top: 14px; padding: 24px"
-        >
+        <div class="cron-result" style="margin-top: 14px; padding: 22px">
           <div class="cron-expr" id="unix-result">—</div>
           <div class="cron-next" id="unix-ms"></div>
         </div>
       </div>
 
-      <!-- ── BASE64 ── -->
+      <!-- BASE64 -->
       <div id="base64-tab" class="tab-content">
-        <div class="panel-title">Base64 Encode / Decode</div>
-        <div class="panel-sub">รองรับ plain text และ URL-safe Base64</div>
+        <div class="section-header">
+          <div>
+            <div class="panel-title">Base64 Encode / Decode</div>
+            <div class="panel-sub">รองรับ plain text และ URL-safe Base64</div>
+          </div>
+          <button class="btn btn-danger" onclick="clearBase64()">
+            ✖ Clear All
+          </button>
+        </div>
         <div class="space-y">
           <div>
             <div
               style="
-                font-size: 0.75rem;
+                font-size: 0.72rem;
                 color: var(--text-dim);
                 margin-bottom: 6px;
                 font-family: &quot;Share Tech Mono&quot;, monospace;
@@ -1000,8 +1358,16 @@
             <button class="btn btn-green" style="flex: 1" onclick="b64Decode()">
               🔓 Decode → Text
             </button>
+            <!-- <button class="btn btn-danger" onclick="clearBase64()">✖ Clear</button> -->
           </div>
-          <div style="display: flex; gap: 14px; align-items: center">
+          <div
+            style="
+              display: flex;
+              gap: 14px;
+              align-items: center;
+              flex-wrap: wrap;
+            "
+          >
             <label class="mode-label"
               ><input type="checkbox" id="b64-urlsafe" /> URL-safe (replace +→-
               /→_)</label
@@ -1021,15 +1387,21 @@
             >
               <span
                 style="
-                  font-size: 0.75rem;
+                  font-size: 0.72rem;
                   color: var(--text-dim);
                   font-family: &quot;Share Tech Mono&quot;, monospace;
                 "
                 >OUTPUT</span
               >
-              <button class="btn btn-ghost" onclick="copyElText('b64-output')">
-                Copy
-              </button>
+              <div style="display: flex; gap: 6px">
+                <button
+                  class="btn btn-ghost"
+                  onclick="copyElText('b64-output')"
+                >
+                  Copy
+                </button>
+                <!-- <button class="btn btn-danger" onclick="clearBase64()">✖</button> -->
+              </div>
             </div>
             <div id="b64-output" class="output-mono" style="min-height: 80px">
               —
@@ -1037,23 +1409,27 @@
           </div>
           <div
             id="b64-error"
-            style="color: #ff8888; font-size: 0.82rem; display: none"
+            style="color: #ff8888; font-size: 0.8rem; display: none"
           ></div>
         </div>
       </div>
 
-      <!-- ── CRON ── -->
+      <!-- CRON -->
       <div id="cron-tab" class="tab-content">
-        <div class="panel-title">Cron Expression Builder</div>
-        <div class="panel-sub">
-          สร้าง cron expression สำหรับ Java scheduler, Spring @Scheduled, Quartz
+        <div class="section-header">
+          <div>
+            <div class="panel-title">Cron Expression Builder</div>
+            <div class="panel-sub">
+              สร้าง cron expression สำหรับ Java scheduler, Spring @Scheduled,
+              Quartz
+            </div>
+          </div>
+          <button class="btn btn-danger" onclick="clearCron()">✖ Reset</button>
         </div>
-
-        <!-- presets -->
-        <div style="margin-bottom: 18px">
+        <div style="margin-bottom: 16px">
           <div
             style="
-              font-size: 0.72rem;
+              font-size: 0.7rem;
               color: var(--text-dim);
               margin-bottom: 8px;
               letter-spacing: 0.05em;
@@ -1078,7 +1454,7 @@
               วันที่ 1 ของเดือน
             </button>
             <button class="btn btn-ghost" onclick="loadPreset('0 0 * * 0')">
-              ทุกวันอาทิตย์ เที่ยงคืน
+              ทุกวันอาทิตย์
             </button>
             <button
               class="btn btn-ghost"
@@ -1088,12 +1464,10 @@
             </button>
           </div>
         </div>
-
-        <!-- manual input -->
-        <div style="margin-bottom: 18px">
+        <div style="margin-bottom: 16px">
           <div
             style="
-              font-size: 0.72rem;
+              font-size: 0.7rem;
               color: var(--text-dim);
               margin-bottom: 6px;
               font-family: &quot;Share Tech Mono&quot;, monospace;
@@ -1112,17 +1486,15 @@
             <button class="btn btn-primary" onclick="parseCronManual()">
               Parse
             </button>
+            <!-- <button class="btn btn-danger" onclick="clearCron()">✖</button> -->
           </div>
         </div>
-
-        <!-- builder -->
-        <div class="cron-grid" style="margin-bottom: 18px">
+        <div class="cron-grid" style="margin-bottom: 16px">
           <div class="cron-field">
-            <label>MINUTE</label>
-            <select id="c-min" onchange="buildCron()">
+            <label>MINUTE</label
+            ><select id="c-min" onchange="buildCron()">
               <option value="*">* (ทุกนาที)</option>
               <option value="0">0</option>
-              <option value="1">1</option>
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="15">15</option>
@@ -1135,75 +1507,54 @@
             </select>
           </div>
           <div class="cron-field">
-            <label>HOUR</label>
-            <select id="c-hr" onchange="buildCron()">
+            <label>HOUR</label
+            ><select id="c-hr" onchange="buildCron()">
               <option value="*">* (ทุกชั่วโมง)</option>
               <option value="0">0 (เที่ยงคืน)</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
               <option value="6">6</option>
-              <option value="7">7</option>
               <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
               <option value="12">12 (เที่ยง)</option>
-              <option value="15">15</option>
-              <option value="17">17</option>
               <option value="18">18</option>
-              <option value="23">23</option>
               <option value="*/1">*/1</option>
               <option value="*/2">*/2</option>
               <option value="*/6">*/6</option>
               <option value="0,6,12,18">0,6,12,18</option>
-              <option value="6,12,18">6,12,18</option>
             </select>
           </div>
           <div class="cron-field">
-            <label>DAY (month)</label>
-            <select id="c-dom" onchange="buildCron()">
+            <label>DAY (month)</label
+            ><select id="c-dom" onchange="buildCron()">
               <option value="*">* (ทุกวัน)</option>
               <option value="1">1</option>
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="15">15</option>
-              <option value="20">20</option>
-              <option value="25">25</option>
               <option value="28">28</option>
               <option value="L">L (สุดท้าย)</option>
             </select>
           </div>
           <div class="cron-field">
-            <label>MONTH</label>
-            <select id="c-mon" onchange="buildCron()">
+            <label>MONTH</label
+            ><select id="c-mon" onchange="buildCron()">
               <option value="*">* (ทุกเดือน)</option>
               <option value="1">1 ม.ค.</option>
-              <option value="2">2 ก.พ.</option>
               <option value="3">3 มี.ค.</option>
-              <option value="4">4 เม.ย.</option>
               <option value="6">6 มิ.ย.</option>
               <option value="12">12 ธ.ค.</option>
-              <option value="1-6">1-6</option>
-              <option value="7-12">7-12</option>
             </select>
           </div>
           <div class="cron-field">
-            <label>DAY (week)</label>
-            <select id="c-dow" onchange="buildCron()">
+            <label>DAY (week)</label
+            ><select id="c-dow" onchange="buildCron()">
               <option value="*">* (ทุกวัน)</option>
               <option value="0">0 อาทิตย์</option>
               <option value="1">1 จันทร์</option>
-              <option value="2">2 อังคาร</option>
-              <option value="3">3 พุธ</option>
-              <option value="4">4 พฤหัสบดี</option>
               <option value="5">5 ศุกร์</option>
-              <option value="6">6 เสาร์</option>
               <option value="1-5">1-5 วันทำการ</option>
               <option value="0,6">0,6 วันหยุด</option>
             </select>
           </div>
         </div>
-
         <div class="cron-result">
           <div id="cron-expr-display" class="cron-expr">* * * * *</div>
           <div id="cron-human" class="cron-human">ทุกนาที</div>
@@ -1214,6 +1565,7 @@
               display: flex;
               gap: 8px;
               justify-content: center;
+              flex-wrap: wrap;
             "
           >
             <button
@@ -1228,36 +1580,12 @@
             <button class="btn btn-ghost" onclick="copyQuartz()">
               Copy Quartz
             </button>
+            <!-- <button class="btn btn-danger" onclick="clearCron()">✖ Reset</button> -->
           </div>
         </div>
-
-        <div
-          style="
-            margin-top: 16px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 14px;
-          "
-        >
-          <div
-            style="
-              font-size: 0.72rem;
-              color: var(--accent);
-              font-family: &quot;Share Tech Mono&quot;, monospace;
-              margin-bottom: 8px;
-            "
-          >
-            FORMAT REFERENCE
-          </div>
-          <div
-            style="
-              font-family: &quot;Share Tech Mono&quot;, monospace;
-              font-size: 0.78rem;
-              color: var(--text-dim);
-              line-height: 2;
-            "
-          >
+        <div class="ref-box" style="margin-top: 16px">
+          <div class="ref-box-title">FORMAT REFERENCE</div>
+          <div class="ref-box-body">
             <span style="color: var(--accent2)">┌──── minute (0-59)</span><br />
             <span style="color: var(--accent2)">│ ┌── hour (0-23)</span><br />
             <span style="color: var(--accent2)">│ │ ┌─ day/month (1-31, L)</span
@@ -1267,22 +1595,30 @@
             <span style="color: var(--accent2)"
               >│ │ │ │ ┌ day/week (0-7, 0=Sun)</span
             ><br />
-            <span style="color: #fff">* * * * *</span>
+            <span style="color: var(--text)">* * * * *</span>
           </div>
         </div>
       </div>
 
-      <!-- ── REGEX ── -->
+      <!-- REGEX -->
       <div id="regex-tab" class="tab-content">
-        <div class="panel-title">Regex Tester</div>
-        <div class="panel-sub">
-          ทดสอบ Regular Expression พร้อม highlight matches และ capture groups
+        <div class="section-header">
+          <div>
+            <div class="panel-title">Regex Tester</div>
+            <div class="panel-sub">
+              ทดสอบ Regular Expression พร้อม highlight matches และ capture
+              groups
+            </div>
+          </div>
+          <button class="btn btn-danger" onclick="clearRegex()">
+            ✖ Clear All
+          </button>
         </div>
         <div class="space-y">
           <div>
             <div
               style="
-                font-size: 0.72rem;
+                font-size: 0.7rem;
                 color: var(--text-dim);
                 margin-bottom: 6px;
                 font-family: &quot;Share Tech Mono&quot;, monospace;
@@ -1312,19 +1648,17 @@
             <div
               id="regex-error"
               style="
-                font-size: 0.78rem;
+                font-size: 0.76rem;
                 color: #ff8888;
                 margin-top: 4px;
                 min-height: 18px;
               "
             ></div>
           </div>
-
-          <!-- quick snippets -->
           <div>
             <div
               style="
-                font-size: 0.72rem;
+                font-size: 0.7rem;
                 color: var(--text-dim);
                 margin-bottom: 6px;
                 letter-spacing: 0.05em;
@@ -1367,15 +1701,15 @@
                 class="btn btn-ghost"
                 onclick="loadRegex('[A-Z]{2,3}-\\d+', 'g')"
               >
-                Jira/Issue Key
+                Jira Key
               </button>
+              <!-- <button class="btn btn-danger" onclick="clearRegex()">✖ Clear</button> -->
             </div>
           </div>
-
           <div>
             <div
               style="
-                font-size: 0.72rem;
+                font-size: 0.7rem;
                 color: var(--text-dim);
                 margin-bottom: 6px;
                 font-family: &quot;Share Tech Mono&quot;, monospace;
@@ -1390,7 +1724,6 @@
               oninput="runRegex()"
             ></textarea>
           </div>
-
           <div>
             <div
               style="
@@ -1402,7 +1735,7 @@
             >
               <span
                 style="
-                  font-size: 0.72rem;
+                  font-size: 0.7rem;
                   color: var(--text-dim);
                   font-family: &quot;Share Tech Mono&quot;, monospace;
                 "
@@ -1411,7 +1744,7 @@
               <span
                 id="regex-count"
                 style="
-                  font-size: 0.78rem;
+                  font-size: 0.76rem;
                   color: var(--accent);
                   font-family: &quot;Share Tech Mono&quot;, monospace;
                 "
@@ -1424,7 +1757,6 @@
               style="min-height: 60px"
             ></div>
           </div>
-
           <div
             id="regex-groups"
             class="match-info"
@@ -1433,14 +1765,20 @@
         </div>
       </div>
 
-      <!-- ── KUBECTL ── -->
+      <!-- KUBECTL -->
       <div id="kubectl-tab" class="tab-content">
-        <div class="panel-title">kubectl Cheatsheet</div>
-        <div class="panel-sub">
-          คำสั่ง kubectl ที่ใช้บ่อย พร้อมคำอธิบายภาษาไทย
+        <div class="section-header">
+          <div>
+            <div class="panel-title">kubectl Cheatsheet</div>
+            <div class="panel-sub">
+              คำสั่ง kubectl ที่ใช้บ่อย พร้อมคำอธิบายภาษาไทย
+            </div>
+          </div>
+          <button class="btn btn-danger" onclick="clearKubectl()">
+            ✖ Clear Search
+          </button>
         </div>
-
-        <div class="kubectl-search">
+        <div style="margin-bottom: 18px">
           <input
             type="text"
             id="kubectl-search"
@@ -1448,20 +1786,44 @@
             oninput="filterKubectl(this.value)"
           />
         </div>
-
-        <div id="kubectl-list">
-          <!-- generated by JS -->
-        </div>
+        <div id="kubectl-list"></div>
       </div>
     </div>
-    <!-- end max-width wrapper -->
 
-    <div class="toast" id="toast">✓ Copied to clipboard</div>
+    <div class="toast" id="toast">✓ Copied</div>
 
     <script>
-      // ══════════════════════════════════════════
-      // NAV
-      // ══════════════════════════════════════════
+      // ── THEME (persist via localStorage) ──
+      const STORAGE_KEY = "isaan-devtools-theme";
+
+      function setTheme(t, btn) {
+        document.body.setAttribute("data-theme", t === "default" ? "" : t);
+        document
+          .querySelectorAll(".theme-btn")
+          .forEach((b) => b.classList.remove("active"));
+        if (btn) btn.classList.add("active");
+        try {
+          localStorage.setItem(STORAGE_KEY, t);
+        } catch (e) {}
+      }
+
+      function restoreTheme() {
+        let saved = "default";
+        try {
+          saved = localStorage.getItem(STORAGE_KEY) || "default";
+        } catch (e) {}
+        document.body.setAttribute(
+          "data-theme",
+          saved === "default" ? "" : saved,
+        );
+        document.querySelectorAll(".theme-btn").forEach((b) => {
+          if (b.getAttribute("data-theme-id") === saved)
+            b.classList.add("active");
+          else b.classList.remove("active");
+        });
+      }
+
+      // ── NAV ──
       function openTab(evt, id) {
         document
           .querySelectorAll(".tab-content")
@@ -1473,9 +1835,7 @@
         evt.currentTarget.classList.add("active");
       }
 
-      // ══════════════════════════════════════════
-      // MOCK DATA
-      // ══════════════════════════════════════════
+      // ── MOCK DATA ──
       const MD = {
         first: [
           "กิตติศักดิ์",
@@ -1488,8 +1848,6 @@
           "สุภาวดี",
           "ธีรพัฒน์",
           "รัตนาภรณ์",
-
-          // สาย Dev
           "ณัฐพงศ์",
           "ปกรณ์",
           "ธนกร",
@@ -1500,8 +1858,6 @@
           "ศุภชัย",
           "นนทวัฒน์",
           "พีรพัฒน์",
-
-          // สายเมา / Office ฮาๆ
           "เบิ้ม",
           "โอ๊ต",
           "บอส",
@@ -1513,7 +1869,6 @@
           "ฟลุ๊ค",
           "ต้น",
         ],
-
         last: [
           "มั่นคง",
           "แสนสุข",
@@ -1525,8 +1880,6 @@
           "เลิศวิจิตร",
           "โพธิ์ทอง",
           "สิงห์คำ",
-
-          // Dev Style
           "เทพโค้ด",
           "สายฮาร์ดโค้ด",
           "อินฟินิตลูป",
@@ -1537,8 +1890,6 @@
           "ดาต้าหาย",
           "รีสตาร์ทเซอร์วิส",
           "สแตกเทรซ",
-
-          // สายเมา
           "คอทองแดง",
           "แก้วสุดท้าย",
           "หมดโปร",
@@ -1584,10 +1935,13 @@
       function setText(id, v) {
         document.getElementById(id).textContent = v;
       }
+      function clearMock() {
+        ["out-id", "out-name", "out-phone", "out-email", "out-uuid"].forEach(
+          (id) => setText(id, "—"),
+        );
+      }
 
-      // ══════════════════════════════════════════
-      // SQL PARSER
-      // ══════════════════════════════════════════
+      // ── SQL ──
       function parseJavaStringConcat(s) {
         s = s.replace(/\/\/.*$/gm, "");
         s = s.replace(/^\s*(final\s+)?(String|StringBuilder)\s+\w+\s*=\s*/, "");
@@ -1601,8 +1955,6 @@
           .replace(/\\n/g, "\n")
           .replace(/\\t/g, "\t")
           .replace(/\\r/g, "\r")
-          .replace(/\\f/g, "\f")
-          .replace(/\\b/g, "\b")
           .replace(/\\"/g, '"')
           .replace(/\\\\/g, "\\");
       }
@@ -1651,7 +2003,7 @@
             result = parseJavaStringConcat(input).trim();
           }
           if (!result) {
-            showSqlErr("ไม่พบ string literal — ตรวจสอบ mode หรือ code");
+            showSqlErr("ไม่พบ string literal");
             return;
           }
           document.getElementById("sql-output").value = result;
@@ -1670,27 +2022,21 @@
         const e = document.getElementById("sql-error");
         e.textContent = "";
         e.classList.remove("visible");
-        document.getElementById("sql-input").focus();
       }
-      function updateSqlPlaceholder(m) {
-        const ta = document.getElementById("sql-input");
-        ta.placeholder =
-          m === "multiline"
-            ? 'StringBuilder sql = new StringBuilder();\nsql.append("SELECT u.id, u.name ");\nsql.append("FROM users u ");\n// comment\nsql.append("WHERE u.active = 1 ");'
-            : 'String sql = "SELECT u.id " +\n             "FROM users u " +\n             "WHERE u.active = 1";';
+      function updateSqlPlaceholder() {
+        document.getElementById("sql-input").placeholder =
+          'String sql = "SELECT u.id " +\n             "FROM users u " +\n             "WHERE u.active = 1";';
       }
 
-      // ══════════════════════════════════════════
-      // DIFF
-      // ══════════════════════════════════════════
+      // ── DIFF ──
       function compareText() {
         let l = document.getElementById("diff-left").value;
-        let r = document.getElementById("diff-right").value;
+        let rr = document.getElementById("diff-right").value;
         try {
           l = JSON.stringify(JSON.parse(l), null, 2);
-          r = JSON.stringify(JSON.parse(r), null, 2);
+          rr = JSON.stringify(JSON.parse(rr), null, 2);
         } catch (e) {}
-        const diff = Diff.diffChars(l, r);
+        const diff = Diff.diffChars(l, rr);
         const res = document.getElementById("diff-result");
         res.innerHTML = "";
         diff.forEach((p) => {
@@ -1701,10 +2047,13 @@
           res.appendChild(s);
         });
       }
+      function clearDiff() {
+        document.getElementById("diff-left").value = "";
+        document.getElementById("diff-right").value = "";
+        document.getElementById("diff-result").innerHTML = "";
+      }
 
-      // ══════════════════════════════════════════
-      // JSON
-      // ══════════════════════════════════════════
+      // ── JSON ──
       function formatJSON(sp) {
         try {
           document.getElementById("json-input").value = JSON.stringify(
@@ -1716,10 +2065,11 @@
           showToast("Invalid JSON ❌");
         }
       }
+      function clearJSON() {
+        document.getElementById("json-input").value = "";
+      }
 
-      // ══════════════════════════════════════════
-      // UNIX TIME
-      // ══════════════════════════════════════════
+      // ── UNIX ──
       function convertUnix() {
         const v = document.getElementById("unix-input").value;
         if (!v) return;
@@ -1737,10 +2087,13 @@
         document.getElementById("unix-input").value = Math.floor(n / 1000);
         convertUnix();
       }
+      function clearUnix() {
+        document.getElementById("unix-input").value = "";
+        document.getElementById("unix-result").textContent = "—";
+        document.getElementById("unix-ms").textContent = "";
+      }
 
-      // ══════════════════════════════════════════
-      // BASE64
-      // ══════════════════════════════════════════
+      // ── BASE64 ──
       function b64Encode() {
         const txt = document.getElementById("b64-input").value;
         const errEl = document.getElementById("b64-error");
@@ -1783,40 +2136,38 @@
           errEl.style.display = "block";
         }
       }
+      function clearBase64() {
+        document.getElementById("b64-input").value = "";
+        document.getElementById("b64-output").textContent = "—";
+        document.getElementById("b64-error").style.display = "none";
+      }
 
-      // ══════════════════════════════════════════
-      // CRON
-      // ══════════════════════════════════════════
+      // ── CRON ──
       let currentCron = "* * * * *";
-
       function buildCron() {
-        const m = document.getElementById("c-min").value;
-        const h = document.getElementById("c-hr").value;
-        const d = document.getElementById("c-dom").value;
-        const mo = document.getElementById("c-mon").value;
-        const dw = document.getElementById("c-dow").value;
+        const m = document.getElementById("c-min").value,
+          h = document.getElementById("c-hr").value,
+          d = document.getElementById("c-dom").value,
+          mo = document.getElementById("c-mon").value,
+          dw = document.getElementById("c-dow").value;
         currentCron = `${m} ${h} ${d} ${mo} ${dw}`;
         updateCronDisplay(currentCron);
       }
-
       function parseCronManual() {
         const v = document.getElementById("cron-manual").value.trim();
         if (!v) return;
         currentCron = v;
         updateCronDisplay(v);
       }
-
       function loadPreset(expr) {
         document.getElementById("cron-manual").value = expr;
         currentCron = expr;
         updateCronDisplay(expr);
       }
-
       function updateCronDisplay(expr) {
         document.getElementById("cron-expr-display").textContent = expr;
         document.getElementById("cron-human").textContent = cronToHuman(expr);
       }
-
       function cronToHuman(expr) {
         const parts = expr.trim().split(/\s+/);
         if (parts.length < 5) return "รูปแบบไม่ถูกต้อง";
@@ -1845,83 +2196,73 @@
           "พ.ย.",
           "ธ.ค.",
         ];
-
-        let parts2 = [];
-
-        // minute
-        if (min === "*") parts2.push("ทุกนาที");
-        else if (min.startsWith("*/")) parts2.push(`ทุก ${min.slice(2)} นาที`);
-        else parts2.push(`นาทีที่ ${min}`);
-
-        // hour
+        let p = [];
+        if (min === "*") p.push("ทุกนาที");
+        else if (min.startsWith("*/")) p.push(`ทุก ${min.slice(2)} นาที`);
+        else p.push(`นาทีที่ ${min}`);
         if (hr !== "*") {
-          if (hr.startsWith("*/")) parts2.push(`ทุก ${hr.slice(2)} ชั่วโมง`);
+          if (hr.startsWith("*/")) p.push(`ทุก ${hr.slice(2)} ชั่วโมง`);
           else if (hr.includes(","))
-            parts2.push(
+            p.push(
               `เวลา ${hr
                 .split(",")
                 .map((h) => `${h}:00`)
                 .join(", ")}`,
             );
           else
-            parts2.push(
+            p.push(
               `เวลา ${hr}:${min === "*" ? "00" : min.padStart(2, "0")} น.`,
             );
         }
-
-        // dow
         if (dow !== "*") {
-          if (dow === "1-5") parts2.push("เฉพาะวันทำการ (จ-ศ)");
-          else if (dow === "0,6") parts2.push("เฉพาะวันหยุด (เสาร์-อาทิตย์)");
+          if (dow === "1-5") p.push("เฉพาะวันทำการ (จ-ศ)");
+          else if (dow === "0,6") p.push("เฉพาะวันหยุด");
           else if (!dow.includes(",") && !dow.includes("-"))
-            parts2.push(`วัน${THdays[parseInt(dow)] || dow}`);
-          else parts2.push(`วัน ${dow}`);
+            p.push(`วัน${THdays[parseInt(dow)] || dow}`);
+          else p.push(`วัน ${dow}`);
         }
-
-        // dom
         if (dom !== "*") {
-          if (dom === "L") parts2.push("วันสุดท้ายของเดือน");
-          else parts2.push(`วันที่ ${dom} ของเดือน`);
+          if (dom === "L") p.push("วันสุดท้ายของเดือน");
+          else p.push(`วันที่ ${dom} ของเดือน`);
         }
-
-        // month
         if (mon !== "*") {
           if (!mon.includes(",") && !mon.includes("-"))
-            parts2.push(`เดือน ${THmons[parseInt(mon)] || mon}`);
-          else parts2.push(`เดือน ${mon}`);
+            p.push(`เดือน ${THmons[parseInt(mon)] || mon}`);
+          else p.push(`เดือน ${mon}`);
         }
-
-        return parts2.length ? parts2.join(" · ") : "ทุกนาที";
+        return p.length ? p.join(" · ") : "ทุกนาที";
       }
-
       function copySpring() {
         copyText(`@Scheduled(cron = "${currentCron}")`);
         showToast("Copied @Scheduled ✓");
       }
       function copyQuartz() {
-        // Quartz uses 6-field (add seconds prefix)
         copyText(`@Scheduled(cron = "0 ${currentCron}")`);
-        showToast("Copied Quartz cron ✓");
+        showToast("Copied Quartz ✓");
+      }
+      function clearCron() {
+        document.getElementById("cron-manual").value = "";
+        ["c-min", "c-hr", "c-dom", "c-mon", "c-dow"].forEach((id) => {
+          document.getElementById(id).selectedIndex = 0;
+        });
+        currentCron = "* * * * *";
+        updateCronDisplay("* * * * *");
       }
 
-      // ══════════════════════════════════════════
-      // REGEX
-      // ══════════════════════════════════════════
+      // ── REGEX ──
       function loadRegex(pat, flags) {
         document.getElementById("regex-pattern").value = pat;
         document.getElementById("regex-flags").value = flags || "g";
         runRegex();
       }
-
       function runRegex() {
         const patStr = document.getElementById("regex-pattern").value;
         const flags = document.getElementById("regex-flags").value || "g";
         const input = document.getElementById("regex-input").value;
-        const errEl = document.getElementById("regex-error");
-        const hlEl = document.getElementById("regex-highlight");
-        const grEl = document.getElementById("regex-groups");
-        const cntEl = document.getElementById("regex-count");
-
+        const errEl = document.getElementById("regex-error"),
+          hlEl = document.getElementById("regex-highlight"),
+          grEl = document.getElementById("regex-groups"),
+          cntEl = document.getElementById("regex-count");
         errEl.textContent = "";
         if (!patStr) {
           hlEl.textContent = input;
@@ -1929,10 +2270,8 @@
           cntEl.textContent = "0 matches";
           return;
         }
-
         let regex;
         try {
-          // ensure g flag for exec loop
           const f = flags.includes("g") ? flags : flags + "g";
           regex = new RegExp(patStr, f);
         } catch (e) {
@@ -1940,8 +2279,6 @@
           hlEl.textContent = input;
           return;
         }
-
-        // find all matches — guard against zero-length match infinite loop
         const matches = [];
         let m;
         const scanRe = new RegExp(
@@ -1963,13 +2300,10 @@
           });
           if (!scanRe.global) break;
         }
-
         cntEl.textContent =
           matches.length + " match" + (matches.length !== 1 ? "es" : "");
-
-        // build highlighted HTML
-        let html = "";
-        let pos = 0;
+        let html = "",
+          pos = 0;
         for (const match of matches) {
           if (match.index > pos) html += escHtml(input.slice(pos, match.index));
           html += `<span class="regex-match">${escHtml(match.full)}</span>`;
@@ -1978,8 +2312,6 @@
         if (pos < input.length) html += escHtml(input.slice(pos));
         hlEl.innerHTML =
           html || '<span style="color:var(--text-dim)">— no input —</span>';
-
-        // group info
         if (matches.length === 0) {
           grEl.innerHTML =
             '<span style="color:var(--text-dim)">No matches found</span>';
@@ -1994,22 +2326,27 @@
           });
         });
         if (matches.length > 10)
-          gHtml += `<div style="color:var(--text-dim); margin-top:4px;">... และอีก ${matches.length - 10} matches</div>`;
+          gHtml += `<div style="color:var(--text-dim);margin-top:4px;">... และอีก ${matches.length - 10} matches</div>`;
         grEl.innerHTML = gHtml;
       }
-
       function escHtml(s) {
         return s
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;");
       }
+      function clearRegex() {
+        document.getElementById("regex-pattern").value = "";
+        document.getElementById("regex-flags").value = "";
+        document.getElementById("regex-input").value = "";
+        document.getElementById("regex-highlight").innerHTML = "";
+        document.getElementById("regex-groups").innerHTML = "";
+        document.getElementById("regex-error").textContent = "";
+        document.getElementById("regex-count").textContent = "0 matches";
+      }
 
-      // ══════════════════════════════════════════
-      // KUBECTL DATA
-      // ══════════════════════════════════════════
+      // ── KUBECTL ──
       const KUBECTL_CMDS = [
-        // POD
         {
           group: "POD",
           cmd: "kubectl get pods",
@@ -2045,8 +2382,6 @@
           cmd: "kubectl get pod <pod-name> -o yaml",
           desc: "Export pod spec เป็น YAML",
         },
-
-        // LOG
         {
           group: "LOGS",
           cmd: "kubectl logs <pod-name>",
@@ -2077,8 +2412,6 @@
           cmd: "kubectl logs -l app=<label> --all-containers",
           desc: "ดู log ของทุก pod ที่มี label ตรงกัน",
         },
-
-        // EXEC
         {
           group: "EXEC / DEBUG",
           cmd: "kubectl exec -it <pod-name> -- bash",
@@ -2109,8 +2442,6 @@
           cmd: "kubectl port-forward svc/<svc> 8080:80",
           desc: "forward port จาก service มาที่ localhost",
         },
-
-        // DEPLOYMENT
         {
           group: "DEPLOYMENT",
           cmd: "kubectl get deployments",
@@ -2146,8 +2477,6 @@
           cmd: "kubectl set image deployment/<name> <container>=<image>:<tag>",
           desc: "อัปเดต image ของ deployment",
         },
-
-        // SERVICE / INGRESS
         {
           group: "SERVICE & INGRESS",
           cmd: "kubectl get svc",
@@ -2168,8 +2497,6 @@
           cmd: "kubectl get endpoints <svc-name>",
           desc: "ดู IP:Port ของ pod ที่ service ชี้อยู่",
         },
-
-        // CONFIG / SECRET
         {
           group: "CONFIGMAP & SECRET",
           cmd: "kubectl get configmaps",
@@ -2182,21 +2509,9 @@
         },
         {
           group: "CONFIGMAP & SECRET",
-          cmd: "kubectl describe configmap <name>",
-          desc: "ดูค่าใน configmap",
-        },
-        {
-          group: "CONFIGMAP & SECRET",
           cmd: "kubectl get secret <name> -o jsonpath='{.data.<key>}' | base64 -d",
           desc: "อ่านค่า secret แล้ว decode base64",
         },
-        {
-          group: "CONFIGMAP & SECRET",
-          cmd: "kubectl create secret generic <name> --from-literal=key=value",
-          desc: "สร้าง secret แบบ key-value",
-        },
-
-        // NAMESPACE
         {
           group: "NAMESPACE",
           cmd: "kubectl get namespaces",
@@ -2208,26 +2523,14 @@
           desc: "เปลี่ยน default namespace ของ context ปัจจุบัน",
         },
         {
-          group: "NAMESPACE",
-          cmd: "kubectl create namespace <name>",
-          desc: "สร้าง namespace ใหม่",
-        },
-
-        // NODES
-        {
           group: "NODE & CLUSTER",
           cmd: "kubectl get nodes",
           desc: "แสดงรายการ node ทั้งหมด",
         },
         {
           group: "NODE & CLUSTER",
-          cmd: "kubectl describe node <node-name>",
-          desc: "ดูรายละเอียด node รวม resource usage",
-        },
-        {
-          group: "NODE & CLUSTER",
           cmd: "kubectl top nodes",
-          desc: "ดู CPU/Memory usage ของแต่ละ node (ต้องมี metrics-server)",
+          desc: "ดู CPU/Memory usage ของแต่ละ node",
         },
         {
           group: "NODE & CLUSTER",
@@ -2239,8 +2542,6 @@
           cmd: "kubectl cluster-info",
           desc: "แสดงข้อมูล cluster และ endpoint",
         },
-
-        // APPLY / DELETE
         {
           group: "APPLY & MANAGE",
           cmd: "kubectl apply -f <file.yaml>",
@@ -2266,8 +2567,6 @@
           cmd: "kubectl get all -n <namespace>",
           desc: "แสดง resource ทุกประเภทใน namespace",
         },
-
-        // CONTEXT
         {
           group: "CONTEXT / CONFIG",
           cmd: "kubectl config get-contexts",
@@ -2284,16 +2583,15 @@
           desc: "แสดง context ที่ใช้งานอยู่ตอนนี้",
         },
       ];
-
       function renderKubectl(cmds) {
         const container = document.getElementById("kubectl-list");
         container.innerHTML = "";
         if (cmds.length === 0) {
-          const empty = document.createElement("div");
-          empty.style.cssText =
-            "color:var(--text-dim);text-align:center;padding:40px;font-family:'Share Tech Mono',monospace;";
-          empty.textContent = "ไม่พบคำสั่งที่ตรงกัน";
-          container.appendChild(empty);
+          const e = document.createElement("div");
+          e.style.cssText =
+            "color:var(--text-dim);text-align:center;padding:40px;";
+          e.textContent = "ไม่พบคำสั่งที่ตรงกัน";
+          container.appendChild(e);
           return;
         }
         const groups = {};
@@ -2304,15 +2602,15 @@
         for (const [grp, items] of Object.entries(groups)) {
           const gDiv = document.createElement("div");
           gDiv.className = "kubectl-group";
-          const gtitle = document.createElement("div");
-          gtitle.className = "kubectl-group-title";
-          gtitle.textContent = grp;
-          gDiv.appendChild(gtitle);
+          const gt = document.createElement("div");
+          gt.className = "kubectl-group-title";
+          gt.textContent = grp;
+          gDiv.appendChild(gt);
           for (const item of items) {
             const card = document.createElement("div");
             card.className = "cmd-card";
             const txt = document.createElement("div");
-            txt.className = "cmd-text";
+            txt.style.flex = "1";
             const codeEl = document.createElement("div");
             codeEl.className = "cmd-code";
             codeEl.textContent = item.cmd;
@@ -2321,8 +2619,6 @@
             descEl.textContent = item.desc;
             txt.appendChild(codeEl);
             txt.appendChild(descEl);
-            const copyWrap = document.createElement("div");
-            copyWrap.className = "cmd-copy";
             const btn = document.createElement("button");
             btn.className = "btn btn-ghost";
             btn.textContent = "Copy";
@@ -2333,15 +2629,13 @@
                 return () => copyText(c);
               })(),
             );
-            copyWrap.appendChild(btn);
             card.appendChild(txt);
-            card.appendChild(copyWrap);
+            card.appendChild(btn);
             gDiv.appendChild(card);
           }
           container.appendChild(gDiv);
         }
       }
-
       function filterKubectl(q) {
         if (!q.trim()) {
           renderKubectl(KUBECTL_CMDS);
@@ -2357,15 +2651,12 @@
           ),
         );
       }
-
-      // init kubectl on first render
-      document.addEventListener("DOMContentLoaded", () => {
+      function clearKubectl() {
+        document.getElementById("kubectl-search").value = "";
         renderKubectl(KUBECTL_CMDS);
-      });
+      }
 
-      // ══════════════════════════════════════════
-      // CLIPBOARD / TOAST
-      // ══════════════════════════════════════════
+      // ── CLIPBOARD / TOAST ──
       function copyText(t) {
         navigator.clipboard.writeText(t).then(() => showToast());
       }
@@ -2381,14 +2672,13 @@
       }
       function showToast(msg) {
         const t = document.getElementById("toast");
-        t.textContent = msg || "✓ Copied to clipboard";
+        t.textContent = msg || "✓ Copied";
         t.classList.add("show");
         setTimeout(() => t.classList.remove("show"), 1800);
       }
-      // ══════════════════════════════════════════
-      // HERO SUB RANDOM QUOTES
-      // ══════════════════════════════════════════
-      const HERO_QUOTES = [
+
+      // ── HERO QUOTES ──
+      const QUOTES = [
         "// deploy เสร็จ ชนแก้วต่อ",
         "// code ตอน sober debug ตอน hang",
         "// git pull ก่อน เบียร์ทีหลัง",
@@ -2398,48 +2688,25 @@
         "// stack trace ยาวไม่เท่าบิลเมื่อคืน",
         "// backend engineer by day bartender by night",
         "// bug นี้เกิดตั้งแต่แก้วที่ 4",
-        "// coffee ตอนเช้า เบียร์ตอนเย็น",
         "// if (เมา) return home;",
         "// drink now debug later",
-        "// query ช้า เพราะคนเขียนยังไม่สร่าง",
-        "// deploy ผ่าน = ร้านเปิดต่อได้",
-        "// rollback เก่งพอๆกับเดินกลับห้อง",
-        "// coding with lager driven architecture",
-        "// log เยอะกว่าเรื่องที่จำได้เมื่อคืน",
-        "// sprint นี้ผ่านได้เพราะแอลกอฮอล์",
-        "// restart service แล้วไปต่อร้านสอง",
         "// CI/CD = Cheers Immediately / Drink Directly",
-        "// memory leak ไม่หนักเท่าความจำเมื่อคืน",
-        "// แก้ bug ตอนตีสอง ความมั่นใจเต็มร้อย",
-        "// ไม่มีอะไร impossible หลังแก้วที่สาม",
-        "// hotfix ตอน hangover คือ hardcore mode",
-        "// production stable แต่คน deploy ไม่ไหว",
-        "// unit test ไม่ครบ แต่ช็อตครบ",
-        "// backend ล่มยังพอแก้ได้ แต่ร้านปิดคือจบ",
-        "// one more deploy one more beer",
         "// kubectl apply แล้ว apply อีกแก้วนึง",
-        "// ERP engineer powered by hops & hope",
       ];
-
       function randomHeroSub() {
-        const heroSub = document.getElementById("hero-sub");
-
-        if (!heroSub) {
-          return;
-        }
-
-        const randomIndex = Math.floor(Math.random() * HERO_QUOTES.length);
-
-        heroSub.style.animation = "none";
-        heroSub.offsetHeight;
-
-        heroSub.textContent = HERO_QUOTES[randomIndex];
-        heroSub.style.width = "0";
-
-        heroSub.style.animation = "typewriter 2s steps(45) 0.5s forwards";
+        const el = document.getElementById("hero-sub");
+        if (!el) return;
+        el.style.animation = "none";
+        el.offsetHeight;
+        el.textContent = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+        el.style.width = "0";
+        el.style.animation = "typewriter 2s steps(45) 0.5s forwards";
       }
 
+      // ── INIT ──
       document.addEventListener("DOMContentLoaded", () => {
+        restoreTheme();
+        renderKubectl(KUBECTL_CMDS);
         randomHeroSub();
       });
     </script>
