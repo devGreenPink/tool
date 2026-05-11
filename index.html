@@ -13,43 +13,6 @@
       const url=URL.createObjectURL(blob);
       const link=document.createElement('link');link.rel='manifest';link.href=url;
       document.head.appendChild(link);
-      // FIX #11: revoke object URL หลังจาก browser โหลด manifest แล้ว เพื่อป้องกัน memory leak
-      link.addEventListener('load',()=>URL.revokeObjectURL(url),{once:true});
-      // fallback: revoke หลัง 5 วินาที ถ้า load event ไม่ fires
-      setTimeout(()=>URL.revokeObjectURL(url),5000);
-    })();
-
-    // Offline cache: Service Worker ผ่าน blob: URL ไม่รองรับ (browser security policy)
-    // ใช้ Cache API โดยตรงแทน — cache หน้าปัจจุบันเพื่อใช้งาน offline ได้
-    (function(){
-      if(!('caches' in window)) return;
-      const CACHE_NAME = 'isaan-devtools-v1';
-      // cache หน้าปัจจุบันเมื่อโหลดครั้งแรก (network-first, cache as fallback)
-      window.addEventListener('load', () => {
-        caches.open(CACHE_NAME).then(cache => {
-          // cache เฉพาะ URL ปัจจุบัน (single HTML file)
-          fetch(location.href).then(res => {
-            if(res && res.ok) cache.put(location.href, res);
-          }).catch(()=>{});
-        }).catch(()=>{});
-      });
-      // แสดง offline indicator เมื่อ network หาย/กลับมา
-      function updateOnlineStatus(){
-        let bar = document.getElementById('offline-bar');
-        if(!navigator.onLine){
-          if(!bar){
-            bar = document.createElement('div');
-            bar.id = 'offline-bar';
-            bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#dc2626;color:#fff;text-align:center;padding:6px;font-size:.78rem;font-weight:600;';
-            bar.textContent = '⚠ ไม่มีการเชื่อมต่ออินเทอร์เน็ต — กำลังใช้งาน offline';
-            document.body.prepend(bar);
-          }
-        } else {
-          if(bar) bar.remove();
-        }
-      }
-      window.addEventListener('online',  updateOnlineStatus);
-      window.addEventListener('offline', updateOnlineStatus);
     })();
   </script>
   <meta name="theme-color" content="#6366f1" />
@@ -237,21 +200,6 @@
       0% { transform: rotate(0deg) scale(1); opacity: 1; }
       50% { transform: rotate(180deg) scale(1.3); opacity: 0.7; }
       100% { transform: rotate(360deg) scale(1); opacity: 1; }
-    }
-
-    /* FIX #14: ปิด animation สำหรับผู้ใช้ที่ต้องการลด motion (accessibility) */
-    @media (prefers-reduced-motion: reduce) {
-      .app-logo-icon,
-      .app-logo-icon::before,
-      .app-logo-icon::after,
-      .app-name,
-      .app-version,
-      .sparkle-particle,
-      .sparkle-emoji,
-      .click-ripple {
-        animation: none !important;
-        transition: none !important;
-      }
     }
 
     .app-name {
@@ -1294,125 +1242,6 @@
     /* ── PWA BANNER ── */
     .pwa-banner { display: none; position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--accent); border-radius: var(--radius); padding: 12px 20px; z-index: 9998; align-items: center; gap: 14px; box-shadow: 0 8px 32px rgba(0,0,0,.5); max-width: 420px; width: calc(100% - 48px); }
     .pwa-banner.show { display: flex; }
-
-    /* ══════════════════════════════════════
-       IDE SHORTCUTS — layout & responsive
-       ══════════════════════════════════════ */
-    .sc-group { margin-bottom: 24px; }
-
-    .sc-group-title {
-      font-size: .68rem; font-weight: 700; letter-spacing: .1em;
-      color: var(--text-dim); text-transform: uppercase;
-      padding: 5px 0 8px; border-bottom: 1px solid var(--border);
-      margin-bottom: 6px; display: flex; align-items: center; gap: 7px;
-    }
-    .sc-group-title .sc-group-icon { font-size: .9rem; }
-
-    /* ── Card ── */
-    .sc-card {
-      display: grid;
-      /* [VS badge+keys] [IJ badge+keys] [description] */
-      grid-template-columns: 1fr 1fr 1.6fr;
-      align-items: start;
-      gap: 0;
-      padding: 0;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      background: var(--surface);
-      margin-bottom: 5px;
-      overflow: hidden;
-      transition: border-color .15s;
-    }
-    .sc-card:hover { border-color: rgba(99,102,241,.4); }
-
-    /* single-IDE filter: hide one column → 2-col grid */
-    .sc-card.ide-vscode { grid-template-columns: 1fr 1.8fr; }
-    .sc-card.ide-idea   { grid-template-columns: 1fr 1.8fr; }
-
-    /* ── Key column ── */
-    .sc-keys-col {
-      padding: 9px 10px;
-      border-right: 1px solid var(--border);
-      display: flex; flex-direction: column; gap: 4px;
-    }
-    .sc-keys-col:last-of-type { border-right: none; }
-
-    .sc-ide-badge {
-      font-size: .58rem; font-family: var(--mono);
-      padding: 1px 5px; border-radius: 8px;
-      display: inline-block; margin-bottom: 4px; line-height: 1.5;
-    }
-    .sc-ide-badge.vscode { background: rgba(0,122,204,.15); color: #4fc3f7; border: 1px solid rgba(0,122,204,.25); }
-    .sc-ide-badge.idea   { background: rgba(255,100,50,.13); color: #ff8a65; border: 1px solid rgba(255,100,50,.22); }
-
-    /* kbd chips */
-    .sc-keys { display: flex; align-items: center; gap: 3px; flex-wrap: wrap; }
-    .sc-key {
-      display: inline-flex; align-items: center;
-      background: var(--surface2);
-      border: 1px solid var(--border-strong);
-      border-bottom: 2px solid var(--border-strong);
-      border-radius: 4px; padding: 1px 6px;
-      font-family: var(--mono); font-size: .68rem;
-      color: var(--accent2); white-space: nowrap;
-      box-shadow: 0 1px 0 rgba(0,0,0,.25);
-    }
-    .sc-na { font-size: .68rem; color: var(--text-dim); font-style: italic; }
-    .sc-plus { color: var(--text-dim); font-size: .65rem; padding: 0 1px; }
-
-    /* ── Description column ── */
-    .sc-info {
-      padding: 9px 12px;
-      border-left: 1px solid var(--border);
-      display: flex; flex-direction: column; justify-content: center;
-      min-width: 0;
-    }
-    .sc-desc { font-size: .8rem; font-weight: 500; color: var(--text); line-height: 1.4; }
-    .sc-sub  { font-size: .7rem; color: var(--text-dim); margin-top: 3px; line-height: 1.4; }
-
-    /* highlight on search */
-    .sc-highlight { background: rgba(251,191,36,.25); color: var(--warning); border-radius: 2px; }
-
-    /* filter / OS buttons */
-    .sc-ide-filter-btn { transition: all .15s; }
-    .sc-ide-filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-    #sc-os-mac.active, #sc-os-win.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-    /* ── Tablet (≤ 860px): description drops to full row ── */
-    @media (max-width: 860px) {
-      .sc-card {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto auto;
-      }
-      .sc-card.ide-vscode,
-      .sc-card.ide-idea { grid-template-columns: 1fr; }
-
-      .sc-info {
-        grid-column: 1 / -1;
-        border-left: none;
-        border-top: 1px solid var(--border);
-        padding: 7px 10px;
-      }
-    }
-
-    /* ── Mobile (≤ 520px): stack everything ── */
-    @media (max-width: 520px) {
-      #shortcut-tab .section-header { flex-direction: column; align-items: stretch; gap: 8px; }
-      #shortcut-ide-btns { flex-wrap: wrap; }
-      #shortcut-tab .section-header > div:last-child { justify-content: space-between; }
-
-      .sc-card,
-      .sc-card.ide-vscode,
-      .sc-card.ide-idea {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto;
-      }
-      .sc-keys-col { border-right: none; border-bottom: 1px solid var(--border); padding: 8px 10px; }
-      .sc-keys-col:last-of-type { border-bottom: none; }
-      .sc-key { font-size: .63rem; padding: 1px 5px; }
-      .sc-info { border-top: 1px solid var(--border); padding: 7px 10px; }
-      .sc-desc { font-size: .78rem; }
-    }
   </style>
 </head>
 <body>
@@ -1486,9 +1315,6 @@
     <div class="nav-item" data-tab="linux-tab" onclick="openTab(event,'linux-tab')">
       <span class="nav-icon">🐧</span> Linux Commands
     </div>
-    <div class="nav-item" data-tab="shortcut-tab" onclick="openTab(event,'shortcut-tab')">
-      <span class="nav-icon">⌨️</span> IDE Shortcuts
-    </div>
   </nav>
 
   <div class="sidebar-footer">
@@ -1527,7 +1353,7 @@
         <button class="btn btn-primary" style="flex:1;min-width:160px;padding:11px 20px;font-size:.9rem;" onclick="generateAll()">
           <span style="font-size:1.1em;">🎲</span> สุ่มข้อมูลใหม่
         </button>
-        <button class="btn btn-ghost" onclick="clearMock()" style="padding:11px 16px;" aria-label="ล้างข้อมูล Mock">
+        <button class="btn btn-ghost" onclick="clearMock()" style="padding:11px 16px;">
           <span>✖</span> ล้าง
         </button>
         <div style="margin-left:auto;display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 4px 4px 12px;">
@@ -1605,7 +1431,7 @@
           </div>
 
           <!-- Copy all -->
-          <button class="btn btn-ghost btn-full" onclick="copyAllMock()" aria-label="คัดลอก Mock ทั้งหมดเป็น JSON" style="margin-top:4px;">
+          <button class="btn btn-ghost btn-full" onclick="copyAllMock()" style="margin-top:4px;">
             📋 Copy ทั้งหมดเป็น JSON
           </button>
         </div>
@@ -1617,7 +1443,7 @@
               <span class="field-label">JSON OUTPUT</span>
               <span id="bulk-count-badge" style="font-size:.68rem;color:var(--accent2);font-family:var(--mono);margin-left:8px;"></span>
             </div>
-            <button class="btn btn-ghost" onclick="copyArea('bulk-json-output')" aria-label="คัดลอกทั้งหมดเป็น JSON">📋 Copy All</button>
+            <button class="btn btn-ghost" onclick="copyArea('bulk-json-output')">📋 Copy All</button>
           </div>
           <textarea id="bulk-json-output" rows="22" readonly style="color:var(--accent2);font-size:.75rem;"></textarea>
         </div>
@@ -1628,8 +1454,8 @@
     <div id="sql-tab" class="tab-content">
       <div class="section-header">
           <div class="toolbar">
-          <button class="btn btn-ghost" onclick="copyArea('sql-output')" aria-label="คัดลอก SQL output">📋 Copy</button>
-          <button class="btn btn-danger" onclick="clearSQL()" aria-label="ล้างข้อมูล SQL">✖ ล้าง</button>
+          <button class="btn btn-ghost" onclick="copyArea('sql-output')">📋 Copy</button>
+          <button class="btn btn-danger" onclick="clearSQL()">✖ ล้าง</button>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
@@ -1637,7 +1463,7 @@
         <span id="sql-detect-badge" style="font-size:.72rem;font-family:var(--mono);padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--text-dim);background:var(--surface2);">—</span>
         <label class="mode-label" style="margin-left:auto;"><input type="checkbox" id="sql-format-check" /> จัดรูปแบบ SQL ผลลัพธ์</label>
       </div>
-      <textarea id="sql-input" rows="8" placeholder='วาง Java code หรือ SQL ได้เลย เช่น&#10;String sql = "SELECT u.id " +&#10;             "FROM users u " +&#10;             "WHERE u.active = 1";' oninput="onSqlInput(this.value)"></textarea>
+      <textarea id="sql-input" rows="8" placeholder='วาง Java code หรือ SQL ได้เลย เช่น&#10;String sql = "SELECT u.id " +&#10;             "FROM users u " +&#10;             "WHERE u.active = 1";' oninput="detectSqlMode(this.value)"></textarea>
       <div style="margin-top:10px;">
         <button class="btn btn-green btn-full" onclick="convertSQL()">▶ แยก SQL</button>
       </div>
@@ -1651,7 +1477,7 @@
           <div class="toolbar">
           <label class="mode-label"><input type="radio" name="diff-mode" value="char" checked onchange="diffModeChange()" /> ระดับตัวอักษร</label>
           <label class="mode-label"><input type="radio" name="diff-mode" value="line" onchange="diffModeChange()" /> ระดับบรรทัด</label>
-          <button class="btn btn-danger" onclick="clearDiff()" aria-label="ล้างข้อมูล Diff">✖ ล้าง</button>
+          <button class="btn btn-danger" onclick="clearDiff()">✖ ล้าง</button>
         </div>
       </div>
       <div class="grid-2">
@@ -1684,7 +1510,7 @@
             <button class="json-view-btn" id="json-btn-split" onclick="switchJsonView('split')">⬛⬛ Split</button>
           </div>
           <label class="mode-label"><input type="checkbox" id="json-live" onchange="toggleJsonLive()" /> Live</label>
-          <button class="btn btn-danger" onclick="clearJSON()" aria-label="ล้างข้อมูล JSON">✖ ล้าง</button>
+          <button class="btn btn-danger" onclick="clearJSON()">✖ ล้าง</button>
         </div>
       </div>
 
@@ -1701,8 +1527,8 @@
 
       <div id="json-tree-pane" style="display:none;">
         <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;flex-wrap:wrap;">
-          <button class="btn btn-ghost" onclick="jsonTreeExpandAll()" aria-label="ขยายทุก node">▼ Expand All</button>
-          <button class="btn btn-ghost" onclick="jsonTreeCollapseAll()" aria-label="ยุบทุก node">▶ Collapse All</button>
+          <button class="btn btn-ghost" onclick="jsonTreeExpandAll()">▼ Expand All</button>
+          <button class="btn btn-ghost" onclick="jsonTreeCollapseAll()">▶ Collapse All</button>
           <span id="json-tree-stats" style="font-size:.72rem;color:var(--text-dim);font-family:var(--mono);margin-left:auto;"></span>
         </div>
         <div id="json-tree-output" class="output-mono tree-root" style="min-height:200px;max-height:520px;overflow:auto;padding:12px;"></div>
@@ -1730,7 +1556,7 @@
         <div class="card-title">🔎 JSONPath Query</div>
         <div class="flex-row">
           <input type="text" id="jsonpath-input" placeholder="$.users[0].name  หรือ  $.items[*].price" style="flex:1;" oninput="runJsonPath()" />
-          <button class="btn btn-ghost" onclick="document.getElementById('jsonpath-input').value='';runJsonPath();" aria-label="ล้างการค้นหา JSONPath">✖</button>
+          <button class="btn btn-ghost" onclick="document.getElementById('jsonpath-input').value='';runJsonPath();">✖</button>
         </div>
         <div class="jsonpath-result" id="jsonpath-result" style="display:none;"></div>
       </div>
@@ -1739,7 +1565,7 @@
     <!-- UNIX -->
     <div id="unix-tab" class="tab-content">
       <div class="section-header">
-          <button class="btn btn-danger" onclick="clearUnix()" aria-label="ล้างข้อมูล Unix timestamp">✖ ล้าง</button>
+          <button class="btn btn-danger" onclick="clearUnix()">✖ ล้าง</button>
       </div>
       <div class="flex-row">
         <input type="number" id="unix-input" placeholder="เช่น 1705568400" style="flex:1;" oninput="convertUnix()" />
@@ -1755,7 +1581,7 @@
     <!-- BASE64 -->
     <div id="base64-tab" class="tab-content">
       <div class="section-header">
-          <button class="btn btn-danger" onclick="clearBase64()" aria-label="ล้างข้อมูล Base64">✖ ล้างทั้งหมด</button>
+          <button class="btn btn-danger" onclick="clearBase64()">✖ ล้างทั้งหมด</button>
       </div>
       <div class="space-y">
         <div>
@@ -1773,7 +1599,7 @@
         <div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
             <span class="field-label">OUTPUT</span>
-            <button class="btn btn-ghost" onclick="copyElText('b64-output')" aria-label="คัดลอก Base64 output">Copy</button>
+            <button class="btn btn-ghost" onclick="copyElText('b64-output')">Copy</button>
           </div>
           <div id="b64-output" class="output-mono" style="min-height:80px;">—</div>
         </div>
@@ -1784,7 +1610,7 @@
     <!-- CRON -->
     <div id="cron-tab" class="tab-content">
       <div class="section-header">
-          <button class="btn btn-danger" onclick="clearCron()" aria-label="รีเซ็ต Cron">↺ รีเซ็ต</button>
+          <button class="btn btn-danger" onclick="clearCron()">↺ รีเซ็ต</button>
       </div>
 
       <div class="card" style="margin-bottom:14px;">
@@ -1930,7 +1756,7 @@
     <!-- REGEX -->
     <div id="regex-tab" class="tab-content">
       <div class="section-header">
-          <button class="btn btn-danger" onclick="clearRegex()" aria-label="ล้างข้อมูล RegEx">✖ ล้างทั้งหมด</button>
+          <button class="btn btn-danger" onclick="clearRegex()">✖ ล้างทั้งหมด</button>
       </div>
       <div class="space-y">
         <div>
@@ -1973,9 +1799,9 @@
     <!-- HASH -->
     <div id="hash-tab" class="tab-content">
       <div class="section-header">
-          <button class="btn btn-danger" onclick="clearHash()" aria-label="ล้างข้อมูล Hash">✖ ล้าง</button>
+          <button class="btn btn-danger" onclick="clearHash()">✖ ล้าง</button>
       </div>
-      <textarea id="hash-input" rows="6" placeholder="วางข้อความที่ต้องการสร้าง hash ที่นี่..." oninput="onHashInput()"></textarea>
+      <textarea id="hash-input" rows="6" placeholder="วางข้อความที่ต้องการสร้าง hash ที่นี่..." oninput="computeHash()"></textarea>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
         <button class="btn btn-primary" style="flex:1;" onclick="computeHash()">🔑 สร้าง Hash</button>
         <label class="mode-label"><input type="checkbox" id="hash-uppercase" onchange="computeHash()" /> ตัวพิมพ์ใหญ่</label>
@@ -1986,7 +1812,7 @@
     <!-- JWT -->
     <div id="jwt-tab" class="tab-content">
       <div class="section-header">
-          <button class="btn btn-danger" onclick="clearJWT()" aria-label="ล้างข้อมูล JWT">✖ ล้าง</button>
+          <button class="btn btn-danger" onclick="clearJWT()">✖ ล้าง</button>
       </div>
       <textarea id="jwt-input" rows="4" placeholder="วาง JWT token ที่นี่... eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" oninput="decodeJWT_UI()"></textarea>
       <div id="jwt-result" style="margin-top:12px;"></div>
@@ -1995,7 +1821,7 @@
     <!-- URL ENCODE/DECODE -->
     <div id="url-tab" class="tab-content">
       <div class="section-header">
-          <button class="btn btn-danger" onclick="clearURL()" aria-label="ล้างข้อมูล URL">✖ ล้างทั้งหมด</button>
+          <button class="btn btn-danger" onclick="clearURL()">✖ ล้างทั้งหมด</button>
       </div>
       <div class="space-y">
         <div>
@@ -2025,8 +1851,8 @@
     <div id="color-tab" class="tab-content">
       <div class="section-header" style="margin-bottom:16px;">
         <div class="toolbar">
-          <button class="btn btn-ghost" onclick="pickRandom()" aria-label="สุ่มสี">🎲 Random</button>
-          <button class="btn btn-danger" onclick="resetColor()" aria-label="รีเซ็ต Color Picker">↺ Reset</button>
+          <button class="btn btn-ghost" onclick="pickRandom()">🎲 Random</button>
+          <button class="btn btn-danger" onclick="resetColor()">↺ Reset</button>
         </div>
       </div>
       <div class="cp-wrap">
@@ -2148,7 +1974,7 @@
               <!-- Toolbar below image -->
               <div class="icp-img-toolbar" id="icp-img-toolbar" style="display:none;">
                 <span id="icp-img-info">คลิกบนภาพเพื่อดูดสี</span>
-                <button class="btn btn-ghost" style="padding:4px 10px;font-size:.72rem;" onclick="document.getElementById('image-upload-input').click();event.stopPropagation()" aria-label="เปลี่ยนภาพ">🔄 เปลี่ยนภาพ</button>
+                <button class="btn btn-ghost" style="padding:4px 10px;font-size:.72rem;" onclick="document.getElementById('image-upload-input').click();event.stopPropagation()">🔄 เปลี่ยนภาพ</button>
               </div>
             </div>
 
@@ -2222,7 +2048,7 @@
               <button class="icp-btn-apply" id="icp-btn-apply" onclick="icpApplyToMainPicker()">
                 ✓ ใช้สีนี้
               </button>
-              <button class="icp-btn-clear" id="icp-btn-clear" onclick="icpClearImage()" aria-label="ล้างภาพ">
+              <button class="icp-btn-clear" id="icp-btn-clear" onclick="icpClearImage()">
                 ✕ ล้างภาพ
               </button>
             </div>
@@ -2241,7 +2067,7 @@
     <!-- HTTP STATUS -->
     <div id="http-tab" class="tab-content">
       <div class="section-header">
-          <button class="btn btn-danger" onclick="clearHttp()" aria-label="ล้างการค้นหา HTTP Status">✖ ล้างการค้นหา</button>
+          <button class="btn btn-danger" onclick="clearHttp()">✖ ล้างการค้นหา</button>
       </div>
       <div style="margin-bottom:14px;">
         <input type="text" id="http-search" placeholder="🔍 ค้นหา... เช่น 404, unauthorized, redirect" oninput="filterHttp(this.value)" />
@@ -2253,7 +2079,7 @@
     <!-- KUBECTL -->
     <div id="kubectl-tab" class="tab-content">
       <div class="section-header">
-          <button class="btn btn-danger" onclick="clearKubectl()" aria-label="ล้างการค้นหา kubectl">✖ ล้างการค้นหา</button>
+          <button class="btn btn-danger" onclick="clearKubectl()">✖ ล้างการค้นหา</button>
       </div>
       <div style="margin-bottom:16px;">
         <input type="text" id="kubectl-search" placeholder="🔍 ค้นหาคำสั่ง... เช่น pod, log, exec, deploy" oninput="filterKubectl(this.value)" />
@@ -2264,31 +2090,12 @@
     <!-- LINUX -->
     <div id="linux-tab" class="tab-content">
       <div class="section-header">
-          <button class="btn btn-danger" onclick="clearLinux()" aria-label="ล้างการค้นหา Linux">✖ ล้างการค้นหา</button>
+          <button class="btn btn-danger" onclick="clearLinux()">✖ ล้างการค้นหา</button>
       </div>
       <div style="margin-bottom:16px;">
         <input type="text" id="linux-search" placeholder="🔍 ค้นหาคำสั่ง... เช่น find, grep, service, port, network" oninput="filterLinux(this.value)" />
       </div>
       <div id="linux-list"></div>
-    </div>
-
-    <!-- IDE SHORTCUTS -->
-    <div id="shortcut-tab" class="tab-content">
-      <div class="section-header" style="flex-wrap:wrap;gap:8px;">
-        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="shortcut-ide-btns"></div>
-        <div style="display:flex;gap:8px;align-items:center;margin-left:auto;">
-          <div style="display:flex;gap:6px;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px 8px;">
-            <span style="font-size:.72rem;color:var(--text-dim);">OS:</span>
-            <button id="sc-os-mac" class="btn btn-ghost" style="padding:3px 10px;font-size:.75rem;" onclick="setShortcutOS('mac',this)">⌘ Mac</button>
-            <button id="sc-os-win" class="btn btn-ghost" style="padding:3px 10px;font-size:.75rem;" onclick="setShortcutOS('win',this)">⊞ Win/Linux</button>
-          </div>
-          <button class="btn btn-danger" onclick="clearShortcut()" aria-label="ล้างการค้นหา Shortcuts">✖ ล้าง</button>
-        </div>
-      </div>
-      <div style="margin:12px 0 16px;">
-        <input type="text" id="shortcut-search" placeholder="🔍 ค้นหา shortcut... เช่น rename, debug, find, refactor, git" oninput="filterShortcut(this.value)" />
-      </div>
-      <div id="shortcut-list"></div>
     </div>
 
   </div><!-- content-area -->
@@ -2304,7 +2111,7 @@
     <div style="font-size:.74rem;color:var(--text-dim);">ใช้งาน offline ได้ · ไม่ต้องเปิด browser</div>
   </div>
   <button class="btn btn-primary" style="padding:7px 14px;font-size:.8rem;" onclick="pwsInstall()">ติดตั้ง</button>
-  <button class="btn btn-ghost" style="padding:7px 10px;" aria-label="ปิด" onclick="document.getElementById('pwa-banner').classList.remove('show')">✕</button>
+  <button class="btn btn-ghost" style="padding:7px 10px;" onclick="document.getElementById('pwa-banner').classList.remove('show')">✕</button>
 </div>
 
 <script>
@@ -2325,7 +2132,6 @@ const TAB_META = {
   'http-tab': { title: 'HTTP Status Code Reference', sub: '1xx · 2xx · 3xx · 4xx · 5xx — คำอธิบายและตัวอย่างการใช้งาน' },
   'kubectl-tab': { title: 'kubectl Cheatsheet', sub: 'คำสั่ง kubectl ที่ใช้บ่อย พร้อมคำอธิบายภาษาไทย' },
   'linux-tab': { title: 'Linux Command Cheatsheet', sub: 'คำสั่ง Linux ที่ใช้บ่อย — Ubuntu / Debian / RHEL' },
-  'shortcut-tab': { title: 'IDE Keyboard Shortcuts', sub: 'VS Code & IntelliJ IDEA — shortcuts ที่ developer ใช้บ่อย พร้อมคำอธิบาย' },
 };
 
 // ── THEME ──
@@ -2358,30 +2164,15 @@ function closeSidebar(){
 
 // ── NAV FILTER ──
 const STORAGE_NAVSEARCH='isaan-devtools-navsearch';
-// FIX #15: เพิ่ม debounce สำหรับการบันทึก localStorage ระหว่างพิมพ์
-let _navSearchTimer=null;
 function filterNav(q){
   const query=q.toLowerCase().trim();
   document.querySelectorAll('.nav-item').forEach(item=>{
     item.style.display=!query||item.textContent.toLowerCase().includes(query)?'':'none';
   });
-  // FIX #5: ซ่อน section label เมื่อไม่มี visible nav-item เหลืออยู่ใน section นั้น
   document.querySelectorAll('.nav-section-label').forEach(label=>{
-    if(!query){label.style.display='';return;}
-    // หา nav-items ที่อยู่ระหว่าง label นี้กับ label ถัดไป
-    let next=label.nextElementSibling;
-    let hasVisible=false;
-    while(next&&!next.classList.contains('nav-section-label')){
-      if(next.classList.contains('nav-item')&&next.style.display!=='none'){hasVisible=true;break;}
-      next=next.nextElementSibling;
-    }
-    label.style.display=hasVisible?'':'none';
+    label.style.display='';
   });
-  // FIX #15: debounce localStorage write — ไม่เขียนทุก keystroke
-  clearTimeout(_navSearchTimer);
-  _navSearchTimer=setTimeout(()=>{
-    try{localStorage.setItem(STORAGE_NAVSEARCH,q);}catch(e){}
-  },400);
+  try{localStorage.setItem(STORAGE_NAVSEARCH,q);}catch(e){}
 }
 function restoreNavSearch(){
   try{
@@ -2443,30 +2234,8 @@ document.addEventListener('keydown',e=>{
 });
 
 // ── UTILS ──
-// Global DOM shorthand — ใช้ร่วมกันทั้ง global scope และ ICP IIFE
-function $id(id){return document.getElementById(id);}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg||'✓ Copied';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
-
-// FIX 3: localStorage version guard
-// เมื่อ STORAGE_VERSION เพิ่มขึ้น จะ clear key เก่าที่อาจ incompatible
-const STORAGE_VERSION = '1';
-const STORAGE_VERSION_KEY = 'isaan-devtools-ver';
-(function migrateStorage(){
-  try{
-    const saved = localStorage.getItem(STORAGE_VERSION_KEY);
-    if(saved !== STORAGE_VERSION){
-      // clear เฉพาะ key ของ app นี้ ไม่กระทบ key อื่น
-      const appKeys = [];
-      for(let i=0;i<localStorage.length;i++){
-        const k = localStorage.key(i);
-        if(k && k.startsWith('isaan-devtools-') && k !== STORAGE_VERSION_KEY) appKeys.push(k);
-      }
-      appKeys.forEach(k => { try{ localStorage.removeItem(k); }catch(e){} });
-      localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION);
-    }
-  }catch(e){}
-})();
-function copyText(txt){navigator.clipboard.writeText(txt).then(()=>showToast('✓ Copied')).catch(()=>{const ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='position:fixed;top:-9999px;left:-9999px;opacity:0;pointer-events:none;';document.body.appendChild(ta);ta.focus();ta.select();let ok=false;try{ok=document.execCommand('copy');}catch(_){}ta.remove();showToast(ok?'✓ Copied':'⚠️ คัดลอกไม่ได้ — ลอง Ctrl+C');});}
+function copyText(txt){navigator.clipboard.writeText(txt).then(()=>showToast('✓ Copied')).catch(()=>{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('✓ Copied');});}
 function copyVal(id){const el=document.getElementById(id);if(el&&el.textContent&&el.textContent!=='—')copyText(el.textContent);}
 function copyElText(id){const el=document.getElementById(id);if(el)copyText(el.value!==undefined?el.value:el.textContent);}
 function copyArea(id){const el=document.getElementById(id);if(el)copyText(el.value||el.textContent);}
@@ -2494,12 +2263,7 @@ function genOneMock(){
   const EN_LAST=['smith','jones','brown','chen','lee','kim','garcia','miller','davis','wilson','taylor','anderson','thomas','jackson','white','harris','martin','walker','hall','allen'];
   const emailName=r(EN_FIRST)+'.'+r(EN_LAST)+Math.floor(Math.random()*999);
   const email=emailName+`@${r(MD.domain)}`;
-  // FIX #2: ใช้ crypto.randomUUID() ที่เป็น standard API แทน expression
-  // ([1e7]+-1e3+-4e3+-8e3+-1e11) ที่อาศัย implicit coercion ซึ่งไม่ stable
-  // crypto.randomUUID() รองรับทุก modern browser และให้ UUID v4 ที่ถูกต้อง
-  const uuid = typeof crypto.randomUUID === 'function'
-    ? crypto.randomUUID()
-    : ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16));
+  const uuid=([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16));
   return{id,name:`${first} ${last}`,phone,email,uuid};
 }
 function generateAll(){
@@ -2540,17 +2304,8 @@ function detectMode(input){
   if(/"[^"]*"\s*\+/.test(input))return'CONCAT';
   const noStrings=input.replace(/"(?:[^"\\]|\\.)*"/g,'""');
   if(/#\{[\w.]+\}/.test(noStrings))return'MYBATIS';
-  // FIX #8: ปรับ regex ให้ไม่ false-positive กับ PostgreSQL cast (::type)
-  // และ timestamp pattern (\d:\d\d) เช่น "10:30" หรือ "2024-01-01T00:00"
-  // ต้องการ ':' ตามด้วย identifier ที่เริ่มต้นด้วยตัวอักษร ไม่ใช่ตัวเลขหรือ ':'
-  if(/(?<![:/\d]):[a-zA-Z_]\w*\b/.test(noStrings))return'MYBATIS';
+  if(/(?<![:/]):\b[a-zA-Z_]\w*\b/.test(noStrings))return'MYBATIS';
   return'PLAIN';
-}
-// FIX 1: debounce SQL mode detection — ป้องกัน re-parse ทุก keystroke
-let _sqlTimer = null;
-function onSqlInput(val) {
-  clearTimeout(_sqlTimer);
-  _sqlTimer = setTimeout(() => detectSqlMode(val), 300);
 }
 function detectSqlMode(val){
   const badge=document.getElementById('sql-detect-badge');
@@ -2586,23 +2341,10 @@ function diffModeChange(){diffMode=document.querySelector('input[name="diff-mode
 function compareText(){
   let l=document.getElementById('diff-left').value;
   let rr=document.getElementById('diff-right').value;
-  // FIX #6: แจ้ง user เมื่อมีการ normalize JSON แทนการทำแบบเงียบๆ
-  let normalized=false;
-  try{
-    const lParsed=JSON.parse(l);const rParsed=JSON.parse(rr);
-    l=JSON.stringify(lParsed,null,2);rr=JSON.stringify(rParsed,null,2);
-    normalized=true;
-  }catch(e){/* ถ้า parse ไม่ได้ ใช้ text ตรงๆ */}
+  try{l=JSON.stringify(JSON.parse(l),null,2);rr=JSON.stringify(JSON.parse(rr),null,2);}catch(e){}
   const res=document.getElementById('diff-result');
   const stats=document.getElementById('diff-stats');
   res.innerHTML='';
-  // แสดง badge บอก user ว่า normalize แล้ว
-  if(normalized){
-    const note=document.createElement('div');
-    note.style.cssText='font-size:.72rem;color:var(--warning);font-family:var(--mono);margin-bottom:6px;padding:4px 8px;background:rgba(251,191,36,0.08);border-radius:4px;border-left:2px solid var(--warning);';
-    note.textContent='⚠ ทั้งสองฝั่งถูก normalize เป็น JSON (pretty-print 2 spaces) ก่อนเปรียบเทียบ';
-    res.appendChild(note);
-  }
   let addedCount=0,removedCount=0;
   if(diffMode==='line'){
     const diff=Diff.diffLines(l,rr);
@@ -2635,8 +2377,6 @@ function clearDiff(){document.getElementById('diff-left').value='';document.getE
 // ── JSON ──
 let jsonLiveMode=false;
 let currentJsonView='editor';
-// FIX #3: debounce timer สำหรับ live mode — ป้องกัน cursor กระโดดขณะพิมพ์
-let _jsonLiveTimer=null;
 function switchJsonView(mode){
   currentJsonView=mode;
   ['editor','tree','split'].forEach(m=>{
@@ -2649,19 +2389,8 @@ function toggleJsonLive(){jsonLiveMode=document.getElementById('json-live').chec
 function onJsonInput(){
   const errEl=document.getElementById('json-error');errEl.style.display='none';
   if(jsonLiveMode){
-    // FIX #3: ใช้ debounce 300ms เพื่อป้องกัน cursor กระโดดไปท้ายทุก keystroke
-    clearTimeout(_jsonLiveTimer);
-    _jsonLiveTimer=setTimeout(()=>{
-      const el=document.getElementById('json-input');
-      const pos=el.selectionStart; // จำตำแหน่ง cursor ไว้
-      try{
-        const formatted=JSON.stringify(JSON.parse(el.value),null,4);
-        el.value=formatted;
-        // คืน cursor ไปตำแหน่งเดิม (approximate)
-        el.selectionStart=el.selectionEnd=Math.min(pos,formatted.length);
-        errEl.style.display='none';
-      }catch(e){errEl.textContent='⚠ '+e.message;errEl.style.display='block';}
-    },300);
+    try{document.getElementById('json-input').value=JSON.stringify(JSON.parse(document.getElementById('json-input').value),null,4);}
+    catch(e){errEl.textContent='⚠ '+e.message;errEl.style.display='block';}
   }
   if(currentJsonView==='tree')refreshJsonTree();
   runJsonPath();
@@ -2723,15 +2452,6 @@ function countKeys(obj,d=0){
   return{total:total+1,depth:maxD};
 }
 function buildTree(val,key,depth,isRoot){
-  // FIX #7: max depth guard ป้องกัน stack overflow กับ JSON ที่ nested ลึกมาก
-  const MAX_DEPTH=100;
-  if(depth>MAX_DEPTH){
-    const wrap=document.createElement('div');wrap.className='tree-node';
-    const line=document.createElement('div');line.className='tree-line';
-    if(key!==null){const k=document.createElement('span');k.className='tree-key';k.textContent=JSON.stringify(key)+':';line.appendChild(k);}
-    const msg=document.createElement('span');msg.style.cssText='color:var(--warning);font-size:.74rem;';msg.textContent='[⚠ ลึกเกิน '+MAX_DEPTH+' ระดับ — ตัดออก]';
-    line.appendChild(msg);wrap.appendChild(line);return wrap;
-  }
   const wrap=document.createElement('div');
   wrap.className='tree-node'+(isRoot?' root-node':'');
   const type=val===null?'null':Array.isArray(val)?'array':typeof val;
@@ -2837,12 +2557,7 @@ function clearUnix(){document.getElementById('unix-input').value='';document.get
 function b64Encode(){
   const txt=document.getElementById('b64-input').value;const errEl=document.getElementById('b64-error');errEl.style.display='none';
   try{
-    // FIX #1: ใช้ loop แทน spread เพื่อป้องกัน "Maximum call stack size exceeded"
-    // กับ input ขนาดใหญ่ (> ~65k bytes) ที่เกิดจาก String.fromCharCode(...largeArray)
-    const encBytes=new TextEncoder().encode(txt);
-    let binary='';
-    for(let i=0;i<encBytes.length;i++) binary+=String.fromCharCode(encBytes[i]);
-    let encoded=btoa(binary);
+    const encBytes=new TextEncoder().encode(txt);let encoded=btoa(String.fromCharCode(...encBytes));
     if(document.getElementById('b64-urlsafe').checked)encoded=encoded.replace(/\+/g,'-').replace(/\//g,'_');
     if(document.getElementById('b64-nopad').checked)encoded=encoded.replace(/=+$/,'');
     document.getElementById('b64-output').textContent=encoded;
@@ -2853,24 +2568,12 @@ function b64Decode(){
   try{
     let s=txt.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';
     const rawBytes=atob(s);let decoded;
-    let isBinary=false;
-    try{
-      decoded=decodeURIComponent(rawBytes.split('').map(c=>'%'+c.charCodeAt(0).toString(16).padStart(2,'0')).join(''));
-    }catch(e2){
-      // FIX #16: แจ้ง user เมื่อ content เป็น binary ที่ไม่ใช่ UTF-8
-      decoded=rawBytes;
-      isBinary=true;
-    }
+    try{decoded=decodeURIComponent(rawBytes.split('').map(c=>'%'+c.charCodeAt(0).toString(16).padStart(2,'0')).join(''));}
+    catch(e2){decoded=rawBytes;}
     document.getElementById('b64-output').textContent=decoded;
-    // แสดง warning ถ้าเป็น binary content
-    if(isBinary){
-      errEl.textContent='⚠ ผลลัพธ์อาจเป็น binary data (ไม่ใช่ UTF-8 text) — แสดงแบบ raw bytes';
-      errEl.style.cssText='display:block;color:var(--warning);background:rgba(251,191,36,0.08);border-color:rgba(251,191,36,0.25);';
-    }
   }catch(e){errEl.textContent='Decode error: invalid Base64';errEl.style.display='block';}
 }
-// FIX #16b: reset style ทั้งหมดของ errEl รวมถึง cssText ที่ fix #16 set ไว้
-function clearBase64(){document.getElementById('b64-input').value='';document.getElementById('b64-output').textContent='—';const e=document.getElementById('b64-error');e.style.cssText='';e.style.display='none';}
+function clearBase64(){document.getElementById('b64-input').value='';document.getElementById('b64-output').textContent='—';document.getElementById('b64-error').style.display='none';}
 
 // ── CRON ──
 let currentCron='* * * * *';
@@ -2933,25 +2636,12 @@ function cronNextRuns(expr,count=5){
   const parts=expr.trim().split(/\s+/);if(parts.length<5)return[];
   const[minF,hrF,domF,monF,dowF]=parts;
   const results=[];
-  // FIX #4: คำนวณ "เวลาปัจจุบัน" ใน timezone ที่เลือก เพื่อให้ next runs ถูกต้อง
-  // วิธี: แปลง now ไปเป็นเวลาตาม cronTz โดยใช้ toLocaleString แล้วสร้าง Date ใหม่
-  const now=new Date();
-  // สร้าง Date object ที่มีค่า wall-clock ตรงกับ timezone ที่เลือก
-  let tzNow;
-  try{
-    const tzStr=now.toLocaleString('en-CA',{timeZone:cronTz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
-    // en-CA format: YYYY-MM-DD, HH:MM:SS
-    tzNow=new Date(tzStr.replace(',',''));
-    if(isNaN(tzNow))throw new Error('parse fail');
-  }catch(e){
-    tzNow=new Date(now);
-  }
-  tzNow.setSeconds(0,0);tzNow.setMinutes(tzNow.getMinutes()+1);
+  const now=new Date();now.setSeconds(0,0);now.setMinutes(now.getMinutes()+1);
   let iter=0;
   while(results.length<count&&iter<60*24*366){
     iter++;
-    if(cronMatchField(tzNow.getMinutes(),minF)&&cronMatchField(tzNow.getHours(),hrF)&&cronMatchField(tzNow.getDate(),domF)&&cronMatchField(tzNow.getMonth()+1,monF)&&cronMatchField(tzNow.getDay(),dowF))results.push(new Date(tzNow));
-    tzNow.setMinutes(tzNow.getMinutes()+1);
+    if(cronMatchField(now.getMinutes(),minF)&&cronMatchField(now.getHours(),hrF)&&cronMatchField(now.getDate(),domF)&&cronMatchField(now.getMonth()+1,monF)&&cronMatchField(now.getDay(),dowF))results.push(new Date(now));
+    now.setMinutes(now.getMinutes()+1);
   }
   return results;
 }
@@ -3012,12 +2702,6 @@ function clearRegex(){['regex-pattern','regex-flags','regex-input'].forEach(id=>
 function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 // ── HASH ──
-// FIX 1: debounce — ป้องกัน crypto.subtle ทุก keystroke (หนัก async)
-let _hashTimer = null;
-function onHashInput() {
-  clearTimeout(_hashTimer);
-  _hashTimer = setTimeout(computeHash, 300);
-}
 async function computeHash(){
   const input=document.getElementById('hash-input').value;
   const upper=document.getElementById('hash-uppercase').checked;
@@ -3025,34 +2709,17 @@ async function computeHash(){
   if(!input.trim()){container.innerHTML='';return;}
   const algos=[['SHA-256','SHA-256'],['SHA-512','SHA-512'],['SHA-1','SHA-1']];
   const enc=new TextEncoder().encode(input);
-  // FIX #9: ใช้ DOM API แทน innerHTML + inline onclick เพื่อป้องกัน XSS
-  container.innerHTML='';
+  let html='';
   for(const[label,algo]of algos){
-    const row=document.createElement('div');row.className='hash-result-row';
     try{
       const buf=await crypto.subtle.digest(algo,enc);
       let hex=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
       if(upper)hex=hex.toUpperCase();
-      const algoDiv=document.createElement('div');algoDiv.className='hash-algo';
-      const labelSpan=document.createElement('span');labelSpan.textContent=label;
-      const copyBtn=document.createElement('button');copyBtn.className='btn btn-ghost';copyBtn.textContent='Copy';
-      // FIX #9: ใช้ closure capture ค่า hex ณ เวลานั้น แทน inline onclick string
-      const capturedHex=hex;
-      copyBtn.addEventListener('click',()=>copyText(capturedHex));
-      algoDiv.appendChild(labelSpan);algoDiv.appendChild(copyBtn);
-      const valDiv=document.createElement('div');valDiv.className='hash-value';valDiv.textContent=hex;
-      row.appendChild(algoDiv);row.appendChild(valDiv);
-    }catch(e){
-      const algoDiv=document.createElement('div');algoDiv.className='hash-algo';algoDiv.textContent=label;
-      const errDiv=document.createElement('div');errDiv.style.cssText='color:var(--danger);font-size:.76rem;';errDiv.textContent=e.message;
-      row.appendChild(algoDiv);row.appendChild(errDiv);
-    }
-    container.appendChild(row);
+      html+=`<div class="hash-result-row"><div class="hash-algo"><span>${label}</span><button class="btn btn-ghost" onclick="copyText('${hex}')">Copy</button></div><div class="hash-value">${hex}</div></div>`;
+    }catch(e){html+=`<div class="hash-result-row"><div class="hash-algo">${label}</div><div style="color:var(--danger);font-size:.76rem;">${e.message}</div></div>`;}
   }
-  const infoDiv=document.createElement('div');
-  infoDiv.style.cssText='margin-top:8px;font-size:.72rem;color:var(--text-dim);font-family:var(--mono);';
-  infoDiv.textContent=`Input: ${enc.length} bytes · ${input.length} chars`;
-  container.appendChild(infoDiv);
+  html+=`<div style="margin-top:8px;font-size:.72rem;color:var(--text-dim);font-family:var(--mono);">Input: ${enc.length} bytes · ${input.length} chars</div>`;
+  container.innerHTML=html;
 }
 function clearHash(){document.getElementById('hash-input').value='';document.getElementById('hash-results').innerHTML='';}
 
@@ -3167,13 +2834,7 @@ const CP_PRESETS=['#f87171','#fb923c','#fbbf24','#a3e635','#34d399','#22d3ee','#
 
 function initCpSwatches(){
   const el=document.getElementById('cp-swatches');if(!el)return;
-  el.innerHTML='';
-  CP_PRESETS.forEach(hex=>{
-    const d=document.createElement('div');
-    d.className='cp-swatch';d.style.background=hex;d.title=hex;
-    d.addEventListener('click',()=>onHexInput(hex));
-    el.appendChild(d);
-  });
+  el.innerHTML=CP_PRESETS.map(hex=>`<div class="cp-swatch" style="background:${hex};" title="${hex}" onclick="onHexInput('${hex}')"></div>`).join('');
 }
 
 // Draw SV square (left=white, right=hue; top=bright, bottom=dark)
@@ -3255,24 +2916,15 @@ function updateColorUI(rgb,alpha){
   // Cursor glow matches color
   const svCur=document.getElementById('cp-sv-cursor');if(svCur)svCur.style.background=hex;
   // Copy boxes
-  // FIX #12: ใช้ $id() สม่ำเสมอ แทนการประกาศ $ local variable ที่ชนกับ convention อื่น
-  if($id('cv-hex'))$id('cv-hex').textContent=hex;
-  if($id('cv-rgb'))$id('cv-rgb').textContent=`rgb(${r}, ${g}, ${b})`;
-  if($id('cv-hsl'))$id('cv-hsl').textContent=`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
-  if($id('cv-rgba'))$id('cv-rgba').textContent=`rgba(${r}, ${g}, ${b}, ${a.toFixed(2)})`;
-  if($id('cv-css'))$id('cv-css').textContent=`--color: ${hex};`;
-  // Opacity variants — FIX #12b: ใช้ $id() และ DOM API แทน $() + inline onclick string
-  const opVars=$id('opacity-variants');
-  if(opVars){
-    opVars.innerHTML='';
-    [0.9,0.75,0.5,0.25].forEach(oa=>{
-      const d=document.createElement('div');d.className='cp-val-btn';
-      d.textContent=`rgba(${r},${g},${b},${oa})`;
-      d.style.background=`rgba(${r},${g},${b},0.12)`;
-      d.addEventListener('click',()=>copyText(`rgba(${r},${g},${b},${oa})`));
-      opVars.appendChild(d);
-    });
-  }
+  const $=id=>document.getElementById(id);
+  if($('cv-hex'))$('cv-hex').textContent=hex;
+  if($('cv-rgb'))$('cv-rgb').textContent=`rgb(${r}, ${g}, ${b})`;
+  if($('cv-hsl'))$('cv-hsl').textContent=`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+  if($('cv-rgba'))$('cv-rgba').textContent=`rgba(${r}, ${g}, ${b}, ${a.toFixed(2)})`;
+  if($('cv-css'))$('cv-css').textContent=`--color: ${hex};`;
+  // Opacity variants
+  const opVars=$('opacity-variants');
+  if(opVars)opVars.innerHTML=[0.9,0.75,0.5,0.25].map(oa=>`<div class="cp-val-btn" onclick="copyText('rgba(${r},${g},${b},${oa})')" style="background:rgba(${r},${g},${b},0.12)">rgba(${r},${g},${b},${oa})</div>`).join('');
   // Redraw canvases
   drawSvSquare();drawHueBar();drawAlphaBar();
 }
@@ -3396,41 +3048,31 @@ const KUBECTL_CMDS=[
 ];
 
 function renderCmdList(cmds,containerId,searchQuery){
-  const container=document.getElementById(containerId);
-  if(!container)return;
-  container.innerHTML='';
-  try{
-    if(!cmds.length){const e=document.createElement('div');e.style.cssText='color:var(--text-dim);text-align:center;padding:40px;';e.textContent='ไม่พบคำสั่งที่ตรงกัน';container.appendChild(e);return;}
-    const groups={};
-    for(const c of cmds){if(!groups[c.group])groups[c.group]=[];groups[c.group].push(c);}
-    for(const[grp,items]of Object.entries(groups)){
-      const gDiv=document.createElement('div');gDiv.className='kubectl-group';
-      const gt=document.createElement('div');gt.className='kubectl-group-title';gt.textContent=grp;gDiv.appendChild(gt);
-      for(const item of items){
-        const card=document.createElement('div');card.className='cmd-card';
-        const txt=document.createElement('div');txt.style.flex='1';
-        const codeEl=document.createElement('div');codeEl.className='cmd-code';
-        const descEl=document.createElement('div');descEl.className='cmd-desc';
-        if(searchQuery&&searchQuery.trim()){
-          codeEl.innerHTML=highlightText(item.cmd,searchQuery);
-          descEl.innerHTML=highlightText(item.desc,searchQuery);
-        }else{
-          codeEl.textContent=item.cmd;descEl.textContent=item.desc;
-        }
-        txt.appendChild(codeEl);txt.appendChild(descEl);
-        const copyBtn=document.createElement('button');copyBtn.className='btn btn-ghost';copyBtn.textContent='Copy';
-        copyBtn.addEventListener('click',()=>copyText(item.cmd));
-        card.appendChild(txt);card.appendChild(copyBtn);
-        gDiv.appendChild(card);
+  const container=document.getElementById(containerId);container.innerHTML='';
+  if(!cmds.length){const e=document.createElement('div');e.style.cssText='color:var(--text-dim);text-align:center;padding:40px;';e.textContent='ไม่พบคำสั่งที่ตรงกัน';container.appendChild(e);return;}
+  const groups={};
+  for(const c of cmds){if(!groups[c.group])groups[c.group]=[];groups[c.group].push(c);}
+  for(const[grp,items]of Object.entries(groups)){
+    const gDiv=document.createElement('div');gDiv.className='kubectl-group';
+    const gt=document.createElement('div');gt.className='kubectl-group-title';gt.textContent=grp;gDiv.appendChild(gt);
+    for(const item of items){
+      const card=document.createElement('div');card.className='cmd-card';
+      const txt=document.createElement('div');txt.style.flex='1';
+      const codeEl=document.createElement('div');codeEl.className='cmd-code';
+      const descEl=document.createElement('div');descEl.className='cmd-desc';
+      if(searchQuery&&searchQuery.trim()){
+        codeEl.innerHTML=highlightText(item.cmd,searchQuery);
+        descEl.innerHTML=highlightText(item.desc,searchQuery);
+      }else{
+        codeEl.textContent=item.cmd;descEl.textContent=item.desc;
       }
-      container.appendChild(gDiv);
+      txt.appendChild(codeEl);txt.appendChild(descEl);
+      const copyBtn=document.createElement('button');copyBtn.className='btn btn-ghost';copyBtn.textContent='Copy';
+      copyBtn.onclick=()=>copyText(item.cmd);
+      card.appendChild(txt);card.appendChild(copyBtn);
+      gDiv.appendChild(card);
     }
-  }catch(err){
-    container.innerHTML='';
-    const e=document.createElement('div');
-    e.style.cssText='color:var(--danger);text-align:center;padding:40px;font-size:.82rem;';
-    e.textContent='⚠ เกิดข้อผิดพลาด: '+err.message;
-    container.appendChild(e);
+    container.appendChild(gDiv);
   }
 }
 
@@ -3501,323 +3143,6 @@ function filterLinux(q){
 }
 function clearLinux(){document.getElementById('linux-search').value='';renderCmdList(LINUX_CMDS,'linux-list','');}
 
-// ── IDE KEYBOARD SHORTCUTS ──
-// key format: { mac, win } — ถ้าเหมือนกันใส่ทั้งคู่
-const SC_IDE_GROUPS = [
-  {
-    group: 'การแก้ไขโค้ด', icon: '✏️',
-    items: [
-      { desc: 'Comment / Uncomment บรรทัด',        sub: 'Toggle line comment',            mac: '⌘ /',            win: 'Ctrl+/',             idea_mac: '⌘ /',           idea_win: 'Ctrl+/',           ide: 'both' },
-      { desc: 'Comment แบบ Block',                  sub: 'Toggle block comment',           mac: '⇧⌥A',           win: 'Shift+Alt+A',        idea_mac: '⌘⌥/',           idea_win: 'Ctrl+Shift+/',     ide: 'both' },
-      { desc: 'ย้ายบรรทัดขึ้น / ลง',               sub: 'Move line up / down',            mac: '⌥↑ / ⌥↓',      win: 'Alt+↑ / Alt+↓',      idea_mac: '⇧⌥↑ / ⇧⌥↓',   idea_win: 'Shift+Alt+↑/↓',   ide: 'both' },
-      { desc: 'คัดลอกบรรทัด ลงล่าง',               sub: 'Duplicate line',                 mac: '⇧⌥↓',           win: 'Shift+Alt+↓',        idea_mac: '⌘D',            idea_win: 'Ctrl+D',           ide: 'both' },
-      { desc: 'ลบทั้งบรรทัด',                       sub: 'Delete line',                    mac: '⇧⌘K',           win: 'Ctrl+Shift+K',       idea_mac: '⌘⌫',            idea_win: 'Ctrl+Y',           ide: 'both' },
-      { desc: 'Indent เพิ่ม / ลด',                  sub: 'Indent / Outdent',               mac: 'Tab / ⇧Tab',    win: 'Tab / Shift+Tab',    idea_mac: 'Tab / ⇧Tab',    idea_win: 'Tab / Shift+Tab',  ide: 'both' },
-      { desc: 'จัดรูปแบบโค้ด (Format)',             sub: 'Format document',                mac: '⇧⌥F',           win: 'Shift+Alt+F',        idea_mac: '⌘⌥L',           idea_win: 'Ctrl+Alt+L',       ide: 'both' },
-      { desc: 'Undo / Redo',                        sub: '',                               mac: '⌘Z / ⇧⌘Z',     win: 'Ctrl+Z / Ctrl+Y',    idea_mac: '⌘Z / ⌘⇧Z',     idea_win: 'Ctrl+Z / Ctrl+Y',  ide: 'both' },
-      { desc: 'เลือกทั้งไฟล์',                      sub: 'Select all',                    mac: '⌘A',            win: 'Ctrl+A',             idea_mac: '⌘A',            idea_win: 'Ctrl+A',           ide: 'both' },
-      { desc: 'ขยาย Selection (Expand)',             sub: 'Expand selection by scope',      mac: '⌃⇧→',           win: 'Shift+Alt+→',        idea_mac: '⌥↑',            idea_win: 'Ctrl+W',           ide: 'both' },
-      { desc: 'Join lines (รวมบรรทัด)',              sub: 'Join next line to current',      mac: 'N/A',           win: 'N/A',                idea_mac: '⌃⇧J',          idea_win: 'Ctrl+Shift+J',     ide: 'idea' },
-      { desc: 'Surround with (ครอบด้วย if/try/...)',sub: 'Surround with template',          mac: 'N/A',           win: 'N/A',                idea_mac: '⌘⌥T',          idea_win: 'Ctrl+Alt+T',       ide: 'idea' },
-    ]
-  },
-  {
-    group: 'Multi-cursor & Selection', icon: '🖱️',
-    items: [
-      { desc: 'เพิ่ม cursor ด้านล่าง',              sub: 'Add cursor below',               mac: '⌥⌘↓',           win: 'Ctrl+Alt+↓',         idea_mac: '⌃⌥↓',          idea_win: 'Alt+Shift+Insert', ide: 'both' },
-      { desc: 'เพิ่ม cursor ที่ click',             sub: 'Add cursor at click',            mac: '⌥+Click',       win: 'Alt+Click',          idea_mac: '⌥+Click',      idea_win: 'Alt+Shift+Click',  ide: 'both' },
-      { desc: 'เลือกคำเดิมทั้งหมด',                 sub: 'Select all occurrences',         mac: '⇧⌘L',           win: 'Ctrl+Shift+L',       idea_mac: '⌃⌘G',          idea_win: 'Ctrl+Alt+Shift+J', ide: 'both' },
-      { desc: 'เลือกคำถัดไปที่เหมือนกัน',           sub: 'Add next occurrence',            mac: '⌘D',            win: 'Ctrl+D',             idea_mac: '⌃G',           idea_win: 'Alt+J',            ide: 'both' },
-      { desc: 'Column / Box selection',             sub: 'Select column block',            mac: '⇧⌥+Drag',       win: 'Shift+Alt+Drag',     idea_mac: '⇧⌥+Drag',      idea_win: 'Shift+Alt+Drag',   ide: 'both' },
-    ]
-  },
-  {
-    group: 'ค้นหาและนำทาง', icon: '🔍',
-    items: [
-      { desc: 'ค้นหาในไฟล์',                        sub: 'Find in file',                   mac: '⌘F',            win: 'Ctrl+F',             idea_mac: '⌘F',            idea_win: 'Ctrl+F',           ide: 'both' },
-      { desc: 'ค้นหาและแทนที่',                      sub: 'Find & Replace',                 mac: '⌥⌘F',           win: 'Ctrl+H',             idea_mac: '⌘R',            idea_win: 'Ctrl+R',           ide: 'both' },
-      { desc: 'ค้นหาทั้ง Project',                   sub: 'Find in all files',              mac: '⇧⌘F',           win: 'Ctrl+Shift+F',       idea_mac: '⇧⌘F',          idea_win: 'Ctrl+Shift+F',     ide: 'both' },
-      { desc: 'แทนที่ทั้ง Project',                  sub: 'Replace in all files',           mac: '⇧⌘H',           win: 'Ctrl+Shift+H',       idea_mac: '⇧⌘R',          idea_win: 'Ctrl+Shift+R',     ide: 'both' },
-      { desc: 'เปิดไฟล์ด่วน',                        sub: 'Quick open file',                mac: '⌘P',            win: 'Ctrl+P',             idea_mac: '⇧⌘O',          idea_win: 'Ctrl+Shift+N',     ide: 'both' },
-      { desc: 'ค้นหา Symbol / Class / Method',       sub: 'Go to symbol',                   mac: '⇧⌘O',           win: 'Ctrl+Shift+O',       idea_mac: '⌘O',            idea_win: 'Ctrl+N',           ide: 'both' },
-      { desc: 'ข้ามไปบรรทัดที่ระบุ',                 sub: 'Go to line',                     mac: '⌃G',            win: 'Ctrl+G',             idea_mac: '⌘L',            idea_win: 'Ctrl+G',           ide: 'both' },
-      { desc: 'ไปยังนิยาม (Declaration)',             sub: 'Go to definition',               mac: '⌘Click / F12', win: 'Ctrl+Click / F12',   idea_mac: '⌘B / ⌘Click',  idea_win: 'Ctrl+B / Ctrl+Click',ide: 'both' },
-      { desc: 'ดูนิยามแบบ Peek (inline)',            sub: 'Peek definition',                mac: '⌥F12',          win: 'Alt+F12',            idea_mac: '⌘Y',           idea_win: 'Ctrl+Shift+I',     ide: 'both' },
-      { desc: 'ไปยัง Implementation',                sub: 'Go to implementation',            mac: '⌘F12',          win: 'Ctrl+F12',           idea_mac: '⌘⌥B',          idea_win: 'Ctrl+Alt+B',       ide: 'both' },
-      { desc: 'หา References ทั้งหมด',               sub: 'Find all references',             mac: '⇧F12',          win: 'Shift+F12',          idea_mac: '⌥F7',          idea_win: 'Alt+F7',           ide: 'both' },
-      { desc: 'กลับ / ไปข้างหน้า (navigation)',      sub: 'Navigate back / forward',        mac: '⌃- / ⌃⇧-',     win: 'Alt+← / Alt+→',      idea_mac: '⌘[ / ⌘]',      idea_win: 'Ctrl+Alt+← / →',  ide: 'both' },
-      { desc: 'ค้นหาทุกอย่าง (Search Everywhere)',   sub: 'Universal search',               mac: 'N/A',           win: 'N/A',                idea_mac: '⇧⇧',           idea_win: 'Shift+Shift',      ide: 'idea' },
-      { desc: 'Recent Files',                        sub: 'Show recently opened files',     mac: 'N/A',           win: 'N/A',                idea_mac: '⌘E',           idea_win: 'Ctrl+E',           ide: 'idea' },
-    ]
-  },
-  {
-    group: 'Refactoring', icon: '🔧',
-    items: [
-      { desc: 'Rename (ทั้ง project)',               sub: 'Rename symbol',                  mac: 'F2',            win: 'F2',                 idea_mac: '⇧F6',          idea_win: 'Shift+F6',         ide: 'both' },
-      { desc: 'Extract Variable',                   sub: 'Extract to variable',            mac: 'N/A',           win: 'N/A',                idea_mac: '⌘⌥V',          idea_win: 'Ctrl+Alt+V',       ide: 'idea' },
-      { desc: 'Extract Method / Function',          sub: 'Extract to method',              mac: 'N/A',           win: 'N/A',                idea_mac: '⌘⌥M',          idea_win: 'Ctrl+Alt+M',       ide: 'idea' },
-      { desc: 'Extract Field / Constant',           sub: 'Extract to field',               mac: 'N/A',           win: 'N/A',                idea_mac: '⌘⌥F / ⌘⌥C',   idea_win: 'Ctrl+Alt+F/C',     ide: 'idea' },
-      { desc: 'Inline Variable / Method',           sub: 'Inline refactor',                mac: 'N/A',           win: 'N/A',                idea_mac: '⌘⌥N',          idea_win: 'Ctrl+Alt+N',       ide: 'idea' },
-      { desc: 'Refactor This (เมนูรวม)',             sub: 'Open refactor menu',             mac: 'N/A',           win: 'N/A',                idea_mac: '⌃T',           idea_win: 'Ctrl+Alt+Shift+T', ide: 'idea' },
-      { desc: 'Quick Fix / Code Action',            sub: 'Trigger code actions',           mac: '⌘.',            win: 'Ctrl+.',             idea_mac: '⌥⏎',           idea_win: 'Alt+Enter',        ide: 'both' },
-      { desc: 'Organize Imports',                   sub: 'Remove unused imports',          mac: '⇧⌥O',           win: 'Shift+Alt+O',        idea_mac: '⌃⌥O',          idea_win: 'Ctrl+Alt+O',       ide: 'both' },
-      { desc: 'Change Signature',                   sub: 'Refactor method signature',      mac: 'N/A',           win: 'N/A',                idea_mac: '⌘F6',          idea_win: 'Ctrl+F6',          ide: 'idea' },
-    ]
-  },
-  {
-    group: 'Code Intelligence', icon: '💡',
-    items: [
-      { desc: 'Auto-complete (Trigger)',             sub: 'Trigger IntelliSense / completion', mac: '⌃Space',     win: 'Ctrl+Space',         idea_mac: '⌃Space',       idea_win: 'Ctrl+Space',       ide: 'both' },
-      { desc: 'Parameter Hints',                    sub: 'Show parameter info',            mac: '⇧⌘Space',       win: 'Ctrl+Shift+Space',   idea_mac: '⌘P',           idea_win: 'Ctrl+P',           ide: 'both' },
-      { desc: 'Quick Documentation',                sub: 'Show docs / hover info',         mac: '⌃K ⌃I',        win: 'Ctrl+K Ctrl+I',      idea_mac: 'F1',           idea_win: 'Ctrl+Q',           ide: 'both' },
-      { desc: 'Show Error / Warning detail',        sub: 'Expand problem message',         mac: '⌘.',            win: 'Ctrl+.',             idea_mac: '⌥⏎',           idea_win: 'Alt+Enter',        ide: 'both' },
-      { desc: 'Generate Code (constructor, getter…)',sub: 'Generate boilerplate code',     mac: 'N/A',           win: 'N/A',                idea_mac: '⌘N',           idea_win: 'Alt+Insert',       ide: 'idea' },
-      { desc: 'Live Templates / Snippets',          sub: 'Insert code template',           mac: 'N/A',           win: 'N/A',                idea_mac: '⌘J',           idea_win: 'Ctrl+J',           ide: 'idea' },
-      { desc: 'Postfix Completion',                 sub: 'e.g. expr.for, expr.notnull',    mac: 'N/A',           win: 'N/A',                idea_mac: 'Tab',          idea_win: 'Tab',              ide: 'idea' },
-      { desc: 'Fill all parameters with defaults',  sub: 'Complete current statement',     mac: 'N/A',           win: 'N/A',                idea_mac: '⇧⌘⏎',         idea_win: 'Ctrl+Shift+Enter', ide: 'idea' },
-    ]
-  },
-  {
-    group: 'Debug', icon: '🐛',
-    items: [
-      { desc: 'Run / Debug ปัจจุบัน',               sub: 'Run / Debug current config',     mac: 'F5 / ⌘F5',     win: 'F5',                 idea_mac: '⌃R / ⌃D',     idea_win: 'Shift+F10 / F9',  ide: 'both' },
-      { desc: 'Stop',                               sub: 'Stop running process',           mac: '⇧F5',           win: 'Shift+F5',           idea_mac: '⌘F2',          idea_win: 'Ctrl+F2',         ide: 'both' },
-      { desc: 'Toggle Breakpoint',                  sub: 'Add / remove breakpoint',        mac: 'F9',            win: 'F9',                 idea_mac: '⌘F8',          idea_win: 'Ctrl+F8',         ide: 'both' },
-      { desc: 'Step Over',                          sub: 'Execute next line',              mac: 'F10',           win: 'F10',                idea_mac: 'F8',           idea_win: 'F8',              ide: 'both' },
-      { desc: 'Step Into',                          sub: 'Step into function call',        mac: 'F11',           win: 'F11',                idea_mac: 'F7',           idea_win: 'F7',              ide: 'both' },
-      { desc: 'Step Out',                           sub: 'Step out of function',           mac: '⇧F11',          win: 'Shift+F11',          idea_mac: '⇧F8',          idea_win: 'Shift+F8',        ide: 'both' },
-      { desc: 'Continue (Resume)',                  sub: 'Run to next breakpoint',         mac: 'F5',            win: 'F5',                 idea_mac: '⌘⌥R / F9',    idea_win: 'F9',              ide: 'both' },
-      { desc: 'Evaluate Expression',                sub: 'Evaluate at breakpoint',         mac: 'N/A',           win: 'N/A',                idea_mac: '⌥F8',          idea_win: 'Alt+F8',          ide: 'idea' },
-      { desc: 'Conditional Breakpoint',             sub: 'Right-click breakpoint → Condition', mac: 'Right-click bp', win: 'Right-click bp', idea_mac: 'Right-click bp',idea_win:'Right-click bp',  ide: 'both' },
-    ]
-  },
-  {
-    group: 'Window & Panel', icon: '🪟',
-    items: [
-      { desc: 'Split Editor (แบ่งหน้าจอ)',           sub: 'Split editor pane',              mac: '⌘\\',           win: 'Ctrl+\\',            idea_mac: 'N/A',          idea_win: 'N/A',             ide: 'vscode' },
-      { desc: 'Toggle Terminal',                    sub: 'Show / hide terminal',           mac: '⌃`',            win: 'Ctrl+`',             idea_mac: '⌥F12',         idea_win: 'Alt+F12',         ide: 'both' },
-      { desc: 'Toggle Sidebar',                     sub: 'Show / hide sidebar',            mac: '⌘B',            win: 'Ctrl+B',             idea_mac: 'N/A',          idea_win: 'N/A',             ide: 'vscode' },
-      { desc: 'Command Palette',                    sub: 'Open command palette',           mac: '⇧⌘P',           win: 'Ctrl+Shift+P',       idea_mac: 'N/A',          idea_win: 'N/A',             ide: 'vscode' },
-      { desc: 'Find Action (ทุกคำสั่ง)',             sub: 'Like VS Code Command Palette',   mac: 'N/A',           win: 'N/A',                idea_mac: '⇧⌘A',         idea_win: 'Ctrl+Shift+A',    ide: 'idea' },
-      { desc: 'Project Tool Window',                sub: 'Toggle project file tree',       mac: '⌘1',            win: 'Ctrl+1',             idea_mac: '⌘1',          idea_win: 'Alt+1',           ide: 'both' },
-      { desc: 'Close Tab',                          sub: 'Close current editor tab',       mac: '⌘W',            win: 'Ctrl+W',             idea_mac: '⌘W',           idea_win: 'Ctrl+F4',         ide: 'both' },
-      { desc: 'Switch Tab',                         sub: 'Navigate between open tabs',     mac: '⌃Tab',          win: 'Ctrl+Tab',           idea_mac: '⌃Tab / ⌘E',   idea_win: 'Ctrl+Tab / Ctrl+E',ide:'both' },
-      { desc: 'Zen Mode (Distraction-free)',         sub: 'Full-screen focus mode',         mac: '⌘K Z',          win: 'Ctrl+K Z',           idea_mac: 'N/A',          idea_win: 'N/A',             ide: 'vscode' },
-      { desc: 'Maximize Editor / Hide all panels',  sub: 'Distraction-free writing',       mac: 'N/A',           win: 'N/A',                idea_mac: '⇧⌘F12',       idea_win: 'Ctrl+Shift+F12',  ide: 'idea' },
-    ]
-  },
-  {
-    group: 'Git / Version Control', icon: '🌿',
-    items: [
-      { desc: 'Open Source Control Panel',          sub: 'Git sidebar',                    mac: '⌃⇧G',           win: 'Ctrl+Shift+G',       idea_mac: '⌘9',           idea_win: 'Alt+9',           ide: 'both' },
-      { desc: 'Commit',                             sub: 'Open commit dialog',             mac: 'N/A',           win: 'N/A',                idea_mac: '⌘K',           idea_win: 'Ctrl+K',          ide: 'idea' },
-      { desc: 'Push',                               sub: 'Push to remote',                 mac: 'N/A',           win: 'N/A',                idea_mac: '⇧⌘K',         idea_win: 'Ctrl+Shift+K',    ide: 'idea' },
-      { desc: 'Update Project (Pull)',              sub: 'Pull latest changes',            mac: 'N/A',           win: 'N/A',                idea_mac: '⌘T',           idea_win: 'Ctrl+T',          ide: 'idea' },
-      { desc: 'Show diff / Annotate (Blame)',       sub: 'View line history / blame',      mac: 'N/A',           win: 'N/A',                idea_mac: '⌘D (in VCS)',  idea_win: 'Ctrl+D',          ide: 'idea' },
-      { desc: 'Revert File / Rollback',             sub: 'Discard changes in file',        mac: 'N/A',           win: 'N/A',                idea_mac: '⌥⌘Z',         idea_win: 'Ctrl+Alt+Z',      ide: 'idea' },
-    ]
-  },
-  {
-    group: 'Java / Quarkus / Spring (IntelliJ)', icon: '☕',
-    items: [
-      { desc: 'Override Methods',                   sub: 'Implement / Override method',    mac: 'N/A',           win: 'N/A',                idea_mac: '⌃O / ⌃I',     idea_win: 'Ctrl+O / Ctrl+I', ide: 'idea' },
-      { desc: 'View class hierarchy',               sub: 'Class / Type hierarchy',         mac: 'N/A',           win: 'N/A',                idea_mac: '⌃H',           idea_win: 'Ctrl+H',          ide: 'idea' },
-      { desc: 'View call hierarchy',                sub: 'See who calls this method',      mac: 'N/A',           win: 'N/A',                idea_mac: '⌃⌥H',         idea_win: 'Ctrl+Alt+H',      ide: 'idea' },
-      { desc: 'Run with Debug (Hot Reload)',        sub: 'Run in debug mode (Quarkus devmode)', mac: 'N/A',      win: 'N/A',                idea_mac: '⌃D',           idea_win: 'Shift+F9',        ide: 'idea' },
-      { desc: 'Database Tool Window',               sub: 'Open DB connection panel',       mac: 'N/A',           win: 'N/A',                idea_mac: 'View → Tools',  idea_win: 'View → Tools',    ide: 'idea' },
-      { desc: 'HTTP Client (built-in)',             sub: 'Run .http file request',         mac: 'N/A',           win: 'N/A',                idea_mac: '▶ in .http file', idea_win: '▶ in .http file', ide: 'idea' },
-      { desc: 'Inspect Code',                       sub: 'Run code analysis',              mac: 'N/A',           win: 'N/A',                idea_mac: 'Analyze menu',  idea_win: 'Analyze menu',    ide: 'idea' },
-    ]
-  },
-  {
-    group: 'TypeScript / Angular (VS Code)', icon: '🔷',
-    items: [
-      { desc: 'Go to Type Definition',             sub: 'Navigate to TS type source',     mac: 'N/A',           win: 'N/A',                idea_mac: 'N/A',          idea_win: 'N/A',             vscode_mac: 'Right-click → Go to Type Definition', vscode_win: 'Right-click → Go to Type Definition', ide: 'vscode' },
-      { desc: 'TypeScript Error Peek',             sub: 'Open Problems panel',            mac: '⇧⌘M',           win: 'Ctrl+Shift+M',       idea_mac: 'N/A',          idea_win: 'N/A',             ide: 'vscode' },
-      { desc: 'Restart TS Server',                 sub: 'Fix TS language server hang',    mac: '⇧⌘P → restart', win: 'Ctrl+Shift+P → restart', idea_mac: 'N/A',      idea_win: 'N/A',             ide: 'vscode' },
-      { desc: 'Angular: Generate Component',       sub: 'via terminal / Angular Console',  mac: 'ng g c name',   win: 'ng g c name',        idea_mac: 'N/A',          idea_win: 'N/A',             ide: 'vscode' },
-      { desc: 'Breadcrumb Navigation',             sub: 'Click breadcrumb to navigate',   mac: '⇧⌘.',           win: 'Ctrl+Shift+.',        idea_mac: 'N/A',          idea_win: 'N/A',             ide: 'vscode' },
-    ]
-  },
-];
-
-let _scActiveIde = 'both'; // 'both' | 'vscode' | 'idea'
-let _scActiveOs  = 'win';  // 'mac' | 'win'
-
-function initShortcutIdeFilter() {
-  const container = $id('shortcut-ide-btns');
-  if (!container) return;
-  container.innerHTML = '';
-  const filters = [
-    { id: 'both',   label: '⌨️ ทั้งหมด' },
-    { id: 'vscode', label: '🔵 VS Code' },
-    { id: 'idea',   label: '🟠 IntelliJ' },
-  ];
-  filters.forEach(f => {
-    const btn = document.createElement('button');
-    btn.className = 'btn btn-ghost sc-ide-filter-btn' + (f.id === _scActiveIde ? ' active' : '');
-    btn.textContent = f.label;
-    btn.style.cssText = 'padding:5px 14px;font-size:.78rem;';
-    btn.addEventListener('click', () => {
-      _scActiveIde = f.id;
-      container.querySelectorAll('.sc-ide-filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderShortcuts($id('shortcut-search').value || '');
-    });
-    container.appendChild(btn);
-  });
-  // restore OS from localStorage
-  try {
-    const saved = localStorage.getItem('isaan-devtools-sc-os');
-    if (saved === 'mac' || saved === 'win') _scActiveOs = saved;
-  } catch(e) {}
-  setShortcutOS(_scActiveOs, null, true);
-}
-
-function setShortcutOS(os, btn, skipRender) {
-  _scActiveOs = os;
-  try { localStorage.setItem('isaan-devtools-sc-os', os); } catch(e) {}
-  const macBtn = $id('sc-os-mac'), winBtn = $id('sc-os-win');
-  if (macBtn) macBtn.classList.toggle('active', os === 'mac');
-  if (winBtn) winBtn.classList.toggle('active', os === 'win');
-  if (!skipRender) renderShortcuts($id('shortcut-search').value || '');
-}
-
-function _scGetKeys(item) {
-  // ส่งคืน { vscode, idea } ตาม OS ที่เลือก
-  // FIX: บาง item มี vscode_mac/vscode_win แยก (TypeScript/Angular group) ให้ใช้ก่อน
-  const os = _scActiveOs;
-  return {
-    vscode: os === 'mac'
-      ? (item.vscode_mac !== undefined ? item.vscode_mac : item.mac)
-      : (item.vscode_win !== undefined ? item.vscode_win : item.win),
-    idea: os === 'mac' ? item.idea_mac : item.idea_win,
-  };
-}
-
-function _scRenderKeys(keyStr, query) {
-  if (!keyStr || keyStr === 'N/A') return '<span style="color:var(--text-dim);font-size:.72rem;">—</span>';
-  // แยก key combo ด้วย + หรือ / หรือ space
-  const parts = keyStr.split(/(\s*\+\s*|\s+\/\s+|\s*\/\s*)/);
-  return parts.map(p => {
-    if (/^\s*[+\/]\s*$/.test(p) || p.trim() === '') {
-      return `<span class="sc-plus">${escHtml(p.trim() || '+')}</span>`;
-    }
-    // FIX: ใช้ escHtml ครอบ key text ป้องกัน XSS แล้วค่อย highlight query
-    const safe = escHtml(p.trim());
-    const text = query
-      ? safe.replace(new RegExp('('+escHtml(query).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')', 'gi'), '<mark class="sc-highlight">$1</mark>')
-      : safe;
-    return `<span class="sc-key">${text}</span>`;
-  }).join('');
-}
-
-function renderShortcuts(query) {
-  const container = $id('shortcut-list');
-  if (!container) return;
-  container.innerHTML = '';
-  const q = (query || '').toLowerCase().trim();
-  try{
-
-  SC_IDE_GROUPS.forEach(grp => {
-    const items = grp.items.filter(item => {
-      if (_scActiveIde !== 'both' && item.ide !== 'both' && item.ide !== _scActiveIde) return false;
-      if (!q) return true;
-      return item.desc.toLowerCase().includes(q) ||
-             (item.sub  || '').toLowerCase().includes(q) ||
-             (item.mac  || '').toLowerCase().includes(q) ||
-             (item.win  || '').toLowerCase().includes(q) ||
-             (item.idea_mac || '').toLowerCase().includes(q) ||
-             (item.idea_win || '').toLowerCase().includes(q);
-    });
-    if (!items.length) return;
-
-    // ── Group header ──
-    const grpDiv = document.createElement('div');
-    grpDiv.className = 'sc-group';
-    const titleDiv = document.createElement('div');
-    titleDiv.className = 'sc-group-title';
-    titleDiv.innerHTML = `<span class="sc-group-icon">${grp.icon}</span>${escHtml(grp.group)}`;
-    grpDiv.appendChild(titleDiv);
-
-    items.forEach(item => {
-      const keys = _scGetKeys(item);
-
-      // ── Card: CSS grid [vscode-col] [idea-col] [desc-col] ──
-      const card = document.createElement('div');
-      card.className = 'sc-card' +
-        (_scActiveIde === 'vscode' ? ' ide-vscode' :
-         _scActiveIde === 'idea'   ? ' ide-idea'   : '');
-
-      // ── VS Code column ──
-      if (_scActiveIde !== 'idea') {
-        const vsCol = document.createElement('div');
-        vsCol.className = 'sc-keys-col';
-        const vsBadge = document.createElement('span');
-        vsBadge.className = 'sc-ide-badge vscode';
-        vsBadge.textContent = 'VS Code';
-        vsCol.appendChild(vsBadge);
-        const vsKeys = document.createElement('div');
-        vsKeys.className = 'sc-keys';
-        vsKeys.innerHTML = _scRenderKeys(keys.vscode, q);
-        vsCol.appendChild(vsKeys);
-        card.appendChild(vsCol);
-      }
-
-      // ── IntelliJ column ──
-      if (_scActiveIde !== 'vscode') {
-        const ijCol = document.createElement('div');
-        ijCol.className = 'sc-keys-col';
-        const ijBadge = document.createElement('span');
-        ijBadge.className = 'sc-ide-badge idea';
-        ijBadge.textContent = 'IntelliJ';
-        ijCol.appendChild(ijBadge);
-        const ijKeys = document.createElement('div');
-        ijKeys.className = 'sc-keys';
-        ijKeys.innerHTML = _scRenderKeys(keys.idea, q);
-        ijCol.appendChild(ijKeys);
-        card.appendChild(ijCol);
-      }
-
-      // ── Description column ──
-      const info = document.createElement('div');
-      info.className = 'sc-info';
-      const desc = document.createElement('div');
-      desc.className = 'sc-desc';
-      desc.innerHTML = q ? highlightText(item.desc, q) : escHtml(item.desc);
-      info.appendChild(desc);
-      if (item.sub) {
-        const sub = document.createElement('div');
-        sub.className = 'sc-sub';
-        sub.innerHTML = q ? highlightText(item.sub, q) : escHtml(item.sub);
-        info.appendChild(sub);
-      }
-      card.appendChild(info);
-
-      grpDiv.appendChild(card);
-    });
-
-    container.appendChild(grpDiv);
-  });
-
-  if (!container.children.length) {
-    container.innerHTML = '<div style="color:var(--text-dim);text-align:center;padding:48px 20px;">ไม่พบ shortcut ที่ตรงกัน</div>';
-  }
-  }catch(err){
-    container.innerHTML='';
-    const e=document.createElement('div');
-    e.style.cssText='color:var(--danger);text-align:center;padding:48px 20px;font-size:.82rem;';
-    e.textContent='⚠ เกิดข้อผิดพลาด: '+err.message;
-    container.appendChild(e);
-  }
-}
-
-function filterShortcut(q) { renderShortcuts(q); }
-function clearShortcut() {
-  $id('shortcut-search').value = '';
-  renderShortcuts('');
-}
-
 // ── HTTP STATUS CODES ──
 const HTTP_CODES=[
   {code:100,name:'Continue',group:'1xx Informational',badgeClass:'s1xx',desc:'เซิร์ฟเวอร์ได้รับ request header แล้ว client สามารถส่ง body ต่อได้',example:'ใช้กับ Expect: 100-continue header ก่อนส่ง request body ขนาดใหญ่'},
@@ -3851,48 +3176,31 @@ const HTTP_GROUPS=['ทั้งหมด','1xx Informational','2xx Success','3x
 let httpActiveGroup='ทั้งหมด';
 function renderHttpList(codes,query){
   const container=document.getElementById('http-list');
-  if(!container)return;
   if(!codes.length){container.innerHTML='<div style="color:var(--text-dim);text-align:center;padding:40px;">ไม่พบ status code ที่ตรงกัน</div>';return;}
-  try{
-    const groups={};
-    for(const c of codes){if(!groups[c.group])groups[c.group]=[];groups[c.group].push(c);}
-    container.innerHTML='';
-    for(const[grp,items]of Object.entries(groups)){
-      const groupDiv=document.createElement('div');groupDiv.className='kubectl-group';
-      const titleDiv=document.createElement('div');titleDiv.className='kubectl-group-title';titleDiv.textContent=grp;
-      groupDiv.appendChild(titleDiv);
-      for(const item of items){
-        const codeStr=String(item.code);
-        const card=document.createElement('div');card.className='http-card';
-        const badgeDiv=document.createElement('div');badgeDiv.className='http-badge '+item.badgeClass;
-        if(query&&codeStr.includes(query)){
-          const hl=document.createElement('span');hl.className='http-highlight';hl.textContent=codeStr;
-          badgeDiv.appendChild(hl);
-        }else{badgeDiv.textContent=codeStr;}
-        const infoDiv=document.createElement('div');infoDiv.style.cssText='flex:1;min-width:0;';
-        const nameDiv=document.createElement('div');nameDiv.className='http-name';
-        nameDiv.innerHTML=query?highlightText(item.name,query):escHtml(item.name);
-        const descDiv=document.createElement('div');descDiv.className='http-desc';
-        descDiv.innerHTML=query?highlightText(item.desc,query):escHtml(item.desc);
-        const exDiv=document.createElement('div');exDiv.className='http-example';
-        exDiv.innerHTML='💡 '+(query?highlightText(item.example,query):escHtml(item.example));
-        infoDiv.appendChild(nameDiv);infoDiv.appendChild(descDiv);infoDiv.appendChild(exDiv);
-        const copyBtn=document.createElement('button');copyBtn.className='btn btn-ghost';
-        copyBtn.style.flexShrink='0';copyBtn.textContent='Copy';
-        const capturedCode=String(item.code);
-        copyBtn.addEventListener('click',()=>copyText(capturedCode));
-        card.appendChild(badgeDiv);card.appendChild(infoDiv);card.appendChild(copyBtn);
-        groupDiv.appendChild(card);
-      }
-      container.appendChild(groupDiv);
+  const groups={};
+  for(const c of codes){if(!groups[c.group])groups[c.group]=[];groups[c.group].push(c);}
+  let html='';
+  for(const[grp,items]of Object.entries(groups)){
+    html+=`<div class="kubectl-group"><div class="kubectl-group-title">${grp}</div>`;
+    for(const item of items){
+      const codeStr=String(item.code);
+      const nameHl=query?highlightText(item.name,query):escHtml(item.name);
+      const descHl=query?highlightText(item.desc,query):escHtml(item.desc);
+      const exHl=query?highlightText(item.example,query):escHtml(item.example);
+      const codeHl=query&&codeStr.includes(query)?`<span class="http-highlight">${codeStr}</span>`:codeStr;
+      html+=`<div class="http-card">
+        <div class="http-badge ${item.badgeClass}">${codeHl}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="http-name">${nameHl}</div>
+          <div class="http-desc">${descHl}</div>
+          <div class="http-example">💡 ${exHl}</div>
+        </div>
+        <button class="btn btn-ghost" style="flex-shrink:0;" onclick="copyText('${item.code}')">Copy</button>
+      </div>`;
     }
-  }catch(err){
-    container.innerHTML='';
-    const e=document.createElement('div');
-    e.style.cssText='color:var(--danger);text-align:center;padding:40px;font-size:.82rem;';
-    e.textContent='⚠ เกิดข้อผิดพลาด: '+err.message;
-    container.appendChild(e);
+    html+='</div>';
   }
+  container.innerHTML=html;
 }
 function filterHttp(q){
   const query=(q||'').trim().toLowerCase();
@@ -3909,14 +3217,7 @@ function setHttpGroup(grp){
 function clearHttp(){document.getElementById('http-search').value='';httpActiveGroup='ทั้งหมด';document.querySelectorAll('.http-group-btn').forEach(b=>b.classList.toggle('active',b.dataset.grp==='ทั้งหมด'));filterHttp('');}
 function initHttp(){
   const btnContainer=document.getElementById('http-group-btns');
-  btnContainer.innerHTML='';
-  HTTP_GROUPS.forEach(g=>{
-    const btn=document.createElement('button');
-    btn.className='http-group-btn'+(g==='ทั้งหมด'?' active':'');
-    btn.dataset.grp=g;btn.textContent=g;
-    btn.addEventListener('click',()=>setHttpGroup(g));
-    btnContainer.appendChild(btn);
-  });
+  btnContainer.innerHTML=HTTP_GROUPS.map(g=>`<button class="http-group-btn${g==='ทั้งหมด'?' active':''}" data-grp="${g}" onclick="setHttpGroup('${g}')">${g}</button>`).join('');
   renderHttpList(HTTP_CODES,'');
 }
 
@@ -4055,6 +3356,9 @@ function pwsInstall(){
       default:    return picked.hex;
     }
   }
+
+  // ── DOM helper ──
+  function $id(id) { return document.getElementById(id); }
 
   function _icpIsMobile() {
     return window.matchMedia('(hover: none) and (pointer: coarse)').matches;
@@ -4282,18 +3586,15 @@ function pwsInstall(){
     } catch (_) { fallbackCopy(text); }
   }
 
-  // fallbackCopy: ใช้เมื่อ navigator.clipboard ไม่พร้อมใช้งาน (non-HTTPS / เก่า)
-  // execCommand('copy') deprecated แต่ยังเป็น fallback ที่ถูกต้องสำหรับ older browsers
   function fallbackCopy(text) {
     const ta = document.createElement('textarea');
     ta.value = text;
-    ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;pointer-events:none;';
+    ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none;';
     document.body.appendChild(ta);
-    ta.focus(); ta.select();
-    let ok = false;
-    try { ok = document.execCommand('copy'); } catch (_) {}
+    ta.select();
+    try { document.execCommand('copy'); showToast('คัดลอก ' + text + ' แล้ว ✓'); }
+    catch (_) { showToast('⚠️ คัดลอกไม่ได้'); }
     ta.remove();
-    showToast(ok ? 'คัดลอก ' + text + ' แล้ว ✓' : '⚠️ คัดลอกไม่ได้ — ลอง Ctrl+C');
   }
 
   // ── Apply to main Color Picker ──
@@ -4486,15 +3787,11 @@ document.addEventListener('DOMContentLoaded',()=>{
   updateCronDisplay('* * * * *');
 
   // Real-time clock — update every second
-  // FIX #13: เก็บ interval ID ไว้ และ clear ก่อน set ใหม่ ป้องกัน interval ซ้อนกัน
-  if(window._tzClockInterval)clearInterval(window._tzClockInterval);
   updateTzClock();
-  window._tzClockInterval=setInterval(updateTzClock, 1000);
+  setInterval(updateTzClock, 1000);
 
   initColorWheel();
   initHttp();
-  initShortcutIdeFilter();
-  renderShortcuts('');
 
   // Auto-generate mock data on load
   generateAll();
